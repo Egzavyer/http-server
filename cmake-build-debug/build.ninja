@@ -41,49 +41,82 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = C$:/dev/cppProjects/http-server/cmake-build-debug/
 # =============================================================================
-# Object build statements for EXECUTABLE target http_server
+# Object build statements for EXECUTABLE target ServerExecutable
 
 
 #############################################
-# Order-only phony target for http_server
+# Order-only phony target for ServerExecutable
 
-build cmake_object_order_depends_target_http_server: phony || CMakeFiles/http_server.dir
+build cmake_object_order_depends_target_ServerExecutable: phony || CMakeFiles/ServerExecutable.dir
 
-build CMakeFiles/http_server.dir/main.cpp.obj: CXX_COMPILER__http_server_unscanned_Debug C$:/dev/cppProjects/http-server/main.cpp || cmake_object_order_depends_target_http_server
-  DEP_FILE = CMakeFiles\http_server.dir\main.cpp.obj.d
+build CMakeFiles/ServerExecutable.dir/server/server.cpp.obj: CXX_COMPILER__ServerExecutable_unscanned_Debug C$:/dev/cppProjects/http-server/server/server.cpp || cmake_object_order_depends_target_ServerExecutable
+  DEP_FILE = CMakeFiles\ServerExecutable.dir\server\server.cpp.obj.d
   FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\http_server.dir
-  OBJECT_FILE_DIR = CMakeFiles\http_server.dir
+  OBJECT_DIR = CMakeFiles\ServerExecutable.dir
+  OBJECT_FILE_DIR = CMakeFiles\ServerExecutable.dir\server
 
-build CMakeFiles/http_server.dir/client/client.cpp.obj: CXX_COMPILER__http_server_unscanned_Debug C$:/dev/cppProjects/http-server/client/client.cpp || cmake_object_order_depends_target_http_server
-  DEP_FILE = CMakeFiles\http_server.dir\client\client.cpp.obj.d
+build CMakeFiles/ServerExecutable.dir/common/common.cpp.obj: CXX_COMPILER__ServerExecutable_unscanned_Debug C$:/dev/cppProjects/http-server/common/common.cpp || cmake_object_order_depends_target_ServerExecutable
+  DEP_FILE = CMakeFiles\ServerExecutable.dir\common\common.cpp.obj.d
   FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\http_server.dir
-  OBJECT_FILE_DIR = CMakeFiles\http_server.dir\client
-
-build CMakeFiles/http_server.dir/server/server.cpp.obj: CXX_COMPILER__http_server_unscanned_Debug C$:/dev/cppProjects/http-server/server/server.cpp || cmake_object_order_depends_target_http_server
-  DEP_FILE = CMakeFiles\http_server.dir\server\server.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\http_server.dir
-  OBJECT_FILE_DIR = CMakeFiles\http_server.dir\server
+  OBJECT_DIR = CMakeFiles\ServerExecutable.dir
+  OBJECT_FILE_DIR = CMakeFiles\ServerExecutable.dir\common
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target http_server
+# Link build statements for EXECUTABLE target ServerExecutable
 
 
 #############################################
-# Link the executable http_server.exe
+# Link the executable ServerExecutable.exe
 
-build http_server.exe: CXX_EXECUTABLE_LINKER__http_server_Debug CMakeFiles/http_server.dir/main.cpp.obj CMakeFiles/http_server.dir/client/client.cpp.obj CMakeFiles/http_server.dir/server/server.cpp.obj
+build ServerExecutable.exe: CXX_EXECUTABLE_LINKER__ServerExecutable_Debug CMakeFiles/ServerExecutable.dir/server/server.cpp.obj CMakeFiles/ServerExecutable.dir/common/common.cpp.obj
   FLAGS = -g
-  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = CMakeFiles\http_server.dir
+  LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\ServerExecutable.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_FILE = http_server.exe
-  TARGET_IMPLIB = libhttp_server.dll.a
-  TARGET_PDB = http_server.exe.dbg
+  TARGET_FILE = ServerExecutable.exe
+  TARGET_IMPLIB = libServerExecutable.dll.a
+  TARGET_PDB = ServerExecutable.exe.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target ClientExecutable
+
+
+#############################################
+# Order-only phony target for ClientExecutable
+
+build cmake_object_order_depends_target_ClientExecutable: phony || CMakeFiles/ClientExecutable.dir
+
+build CMakeFiles/ClientExecutable.dir/client/client.cpp.obj: CXX_COMPILER__ClientExecutable_unscanned_Debug C$:/dev/cppProjects/http-server/client/client.cpp || cmake_object_order_depends_target_ClientExecutable
+  DEP_FILE = CMakeFiles\ClientExecutable.dir\client\client.cpp.obj.d
+  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\ClientExecutable.dir
+  OBJECT_FILE_DIR = CMakeFiles\ClientExecutable.dir\client
+
+build CMakeFiles/ClientExecutable.dir/common/common.cpp.obj: CXX_COMPILER__ClientExecutable_unscanned_Debug C$:/dev/cppProjects/http-server/common/common.cpp || cmake_object_order_depends_target_ClientExecutable
+  DEP_FILE = CMakeFiles\ClientExecutable.dir\common\common.cpp.obj.d
+  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\ClientExecutable.dir
+  OBJECT_FILE_DIR = CMakeFiles\ClientExecutable.dir\common
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target ClientExecutable
+
+
+#############################################
+# Link the executable ClientExecutable.exe
+
+build ClientExecutable.exe: CXX_EXECUTABLE_LINKER__ClientExecutable_Debug CMakeFiles/ClientExecutable.dir/client/client.cpp.obj CMakeFiles/ClientExecutable.dir/common/common.cpp.obj
+  FLAGS = -g
+  LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\ClientExecutable.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = ClientExecutable.exe
+  TARGET_IMPLIB = libClientExecutable.dll.a
+  TARGET_PDB = ClientExecutable.exe.dbg
 
 
 #############################################
@@ -111,7 +144,9 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build http_server: phony http_server.exe
+build ClientExecutable: phony ClientExecutable.exe
+
+build ServerExecutable: phony ServerExecutable.exe
 
 # =============================================================================
 # Folder targets.
@@ -121,7 +156,7 @@ build http_server: phony http_server.exe
 #############################################
 # Folder: C:/dev/cppProjects/http-server/cmake-build-debug
 
-build all: phony http_server.exe
+build all: phony ServerExecutable.exe ClientExecutable.exe
 
 # =============================================================================
 # Built-in targets
