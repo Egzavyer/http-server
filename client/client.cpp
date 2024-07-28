@@ -40,5 +40,20 @@ int main() {
         return 1;
     }
 
+    //Connect to server
+    iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
+    if (iResult == SOCKET_ERROR) {
+        closesocket(ConnectSocket);
+        ConnectSocket = INVALID_SOCKET;
+    }
+
+    //Should try next address if fails but instead free resources
+    freeaddrinfo(result);
+    if (ConnectSocket == INVALID_SOCKET) {
+        printf("Unable to connect to server!\n");
+        WSACleanup();
+        return 1;
+    }
+
 }
 
