@@ -55,5 +55,46 @@ int main() {
         return 1;
     }
 
+    int recvbuflen = 512;
+
+    const char *sendbuf = "TEST";
+    char recvbuf[recvbuflen];
+
+    //Send initial buffer to server
+    iResult = send(ConnectSocket,sendbuf,(int) strlen(sendbuf),0);
+    if (iResult == SOCKET_ERROR) {
+        printf("send failed: %d\n",WSAGetLastError());
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    printf("Bytes Sent: %ld\n",iResult);
+
+    //Close the connection for sending
+    iResult = shutdown(ConnectSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR){
+        printf("shutdown failed: %d\n",WSAGetLastError());
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    //Recieve data until connection closed by server
+    do {
+        iResult = recv(ConnectSocket, recvbuf,recvbuflen,0);
+        if (iResult > 0)
+            printf("Bytes Received: %d\n", iResult);
+        else if (iResult == 0)
+            printf("Connection Closed\n");
+        else
+            printf("recv failed:%d\n",WSAGetLastError());
+    } while (iResult > 0);
+
+
+
+
+
+
 }
 
