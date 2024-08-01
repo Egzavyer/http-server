@@ -30,6 +30,7 @@ int serverIO(SOCKET ClientSocket) {
             return 1;
         }
     } while (iResult > 0);
+    return 0;
 }
 
 int main() {
@@ -92,6 +93,18 @@ int main() {
         return 1;
     }
     serverIO(ClientSocket);
+
+    iResult = shutdown(ClientSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        printf("SERVER SHUTDOWN FAILED: %d\n", WSAGetLastError());
+        closesocket(ClientSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    closesocket(ClientSocket);
+    WSACleanup();
+    return 0;
 }
 
 
