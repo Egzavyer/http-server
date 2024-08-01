@@ -21,9 +21,9 @@ int main() {
     hints.ai_socktype = SOCK_STREAM; // TCP Socket
     hints.ai_protocol = IPPROTO_TCP; // TCP Protocol
 
-    iResult = getaddrinfo("localhost", "27015", &hints, &result);
+    iResult = getaddrinfo("localhost", DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
-        printf("GETADDRINFO FAILED %d\n", iResult);
+        printf("CLIENT GETADDRINFO FAILED %d\n", iResult);
         WSACleanup();
         return 1;
     }
