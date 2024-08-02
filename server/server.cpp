@@ -11,6 +11,7 @@ int serverIO(SOCKET ClientSocket) {
         iResult = recv(ClientSocket, recvbuf, DEFAULT_BUFLEN, 0);
         if (iResult > 0) {
             printf("Bytes Received: %d\n", iResult);
+            printf("%s\n", recvbuf);
 
             //Echo the buffer back
             iSendResult = send(ClientSocket, recvbuf,iResult,0);

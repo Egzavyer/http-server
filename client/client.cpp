@@ -8,7 +8,7 @@ int main() {
     WSADATA wsaData;
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
-        std::cout << "WSAStartup failed: " << iResult << std::endl;
+        std::cout << "WSASTARTUP FAILED: " << iResult << std::endl;
         return 1;
     }
 
@@ -23,7 +23,7 @@ int main() {
 
     iResult = getaddrinfo("localhost", DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
-        printf("CLIENT GETADDRINFO FAILED %d\n", iResult);
+        printf("GETADDRINFO FAILED %d\n", iResult);
         WSACleanup();
         return 1;
     }
@@ -46,6 +46,7 @@ int main() {
         closesocket(ConnectSocket);
         ConnectSocket = INVALID_SOCKET;
     }
+    printf("Connecting to Server...\n");
 
     // Should try next address if fails but instead free resources
     freeaddrinfo(result);
@@ -56,7 +57,7 @@ int main() {
     }
 
     // Send data using the clientSend function
-    const char *sendbuf = "TEST";
+    const char *sendbuf = "Hello from Client";
     iResult = send(ConnectSocket, sendbuf, (int) strlen(sendbuf), 0);
     if (iResult == SOCKET_ERROR) {
         printf("SEND FAILED: %d\n", WSAGetLastError());
@@ -79,8 +80,10 @@ int main() {
     char recvbuf[recvbuflen];
     do {
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        if (iResult > 0)
+        if (iResult > 0) {
             printf("Bytes Received: %d\n", iResult);
+            printf("%s\n", recvbuf);
+        }
         else if (iResult == 0)
             printf("Connection Closed\n");
         else

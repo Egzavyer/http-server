@@ -7,7 +7,7 @@
 #include <iostream>
 
 #define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
+#define DEFAULT_PORT "12345"
 
 class Common {
 
