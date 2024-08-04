@@ -1,7 +1,7 @@
 #include "client.h"
 #include "../common/common.h"
 
-#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "ws2_32.lib") // Link with the Winsock library
 
 /**
  * @brief The entry point of the program.
@@ -32,6 +32,7 @@ int main()
     hints.ai_socktype = SOCK_STREAM; // TCP Socket
     hints.ai_protocol = IPPROTO_TCP; // TCP Protocol
 
+    // Resolve the server address and port
     iResult = getaddrinfo("localhost", DEFAULT_PORT, &hints, &result);
     if (iResult != 0)
     {
@@ -40,7 +41,7 @@ int main()
         return 1;
     }
 
-    // Create socket
+    // Create a socket for connecting to the server
     SOCKET ConnectSocket = INVALID_SOCKET;
     ptr = result;
     ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
@@ -53,7 +54,7 @@ int main()
         return 1;
     }
 
-    // Connect to server
+    // Connect to the server
     iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
     if (iResult == SOCKET_ERROR)
     {
@@ -61,7 +62,7 @@ int main()
         ConnectSocket = INVALID_SOCKET;
     }
     printf("Connecting to Server...\n");
-    // TODO:Should try next address if fails but instead free resources
+    // TODO: Should try next address if fails but instead free resources
     freeaddrinfo(result);
 
     if (ConnectSocket == INVALID_SOCKET)
@@ -71,6 +72,7 @@ int main()
         return 1;
     }
 
+    // Send a message to the server
     const char *sendbuf = "Hello from Client";
     iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
     if (iResult == SOCKET_ERROR)
@@ -81,7 +83,7 @@ int main()
         return 1;
     }
 
-    // Close the connection for sending
+    // Shutdown the connection for sending
     iResult = shutdown(ConnectSocket, SD_SEND);
     if (iResult == SOCKET_ERROR)
     {
@@ -91,7 +93,7 @@ int main()
         return 1;
     }
 
-    // Receive data until connection closed by server
+    // Receive data until the server closes the connection
     const int recvbuflen = DEFAULT_BUFLEN;
     char recvbuf[recvbuflen];
     do
@@ -108,6 +110,7 @@ int main()
             printf("RECV FAILED:%d\n", WSAGetLastError());
     } while (iResult > 0);
 
+    // Shutdown the connection for sending again (redundant)
     iResult = shutdown(ConnectSocket, SD_SEND);
     if (iResult == SOCKET_ERROR)
     {
