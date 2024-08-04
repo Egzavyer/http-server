@@ -57,6 +57,7 @@ int main()
 
     freeaddrinfo(result);
 
+    //TODO: Implement a way to retry with backoff strategy
     if (ConnectSocket == INVALID_SOCKET) {
         printf("Unable to connect to server!\n");
         WSACleanup();
@@ -64,7 +65,9 @@ int main()
     }
 
     // Send a message to the server
-    const char *sendbuf = "Hello from Client";
+    const char *sendbuf = "GET /index.html HTTP/1.1\r\n"
+                          "Host: www.example.com\r\n"
+                          "Accept: text/html\r\n\r\n";
     iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
     if (iResult == SOCKET_ERROR)
     {

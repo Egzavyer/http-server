@@ -1,6 +1,26 @@
-#include "server.h"                // Include the server header file
-#include "../common/common.h"      // Include the common header file
-#pragma comment(lib, "ws2_32.lib") // Link with the Winsock library
+#include "server.h"
+#include "../common/common.h"
+#pragma comment(lib, "ws2_32.lib")
+
+void parseRequestLine(std::string requestLine){
+    std::cout << "REQUEST LINE:\n";
+    std::cout << requestLine << "\n";
+
+    std::size_t methodEnd = requestLine.find(' ', 0);
+    std::string method = requestLine.substr(0,methodEnd);
+
+    std::size_t urlEnd = requestLine.find(' ', methodEnd+1);
+    std::string url = requestLine.substr(methodEnd+1, urlEnd-(methodEnd+1));
+
+    std::string httpVersion = requestLine.substr(urlEnd+1);
+}
+
+void parseHeaders(std::string headers){
+    std::cout << "HEADERS:\n";
+    std::cout << headers << "\n";
+
+
+}
 
 
 int serverIO(SOCKET ClientSocket)
@@ -14,9 +34,19 @@ int serverIO(SOCKET ClientSocket)
         iResult = recv(ClientSocket, recvbuf, DEFAULT_BUFLEN - 1, 0);
         if (iResult > 0)
         {
-            recvbuf[iResult] = '\0'; //Null-terminate the buffer
             printf("Bytes Received: %d\n", iResult);
             printf("%s\n", recvbuf);
+            std::string data(recvbuf);
+
+            std::size_t requestLineEnd = data.find("\r\n",0);
+            std::string requestLine = data.substr(0,requestLineEnd);
+            parseRequestLine(requestLine);
+
+            std::size_t headersEnd = data.find("\r\n\r\n",requestLineEnd+1);
+            std::string headers = data.substr(requestLineEnd+2, headersEnd-(requestLineEnd+4));
+            parseHeaders(headers);
+
+            recvbuf[iResult] = '\0'; //Null-terminate the buffer
 
             // Echo the buffer back to the client
             iSendResult = send(ClientSocket, recvbuf, iResult, 0);
