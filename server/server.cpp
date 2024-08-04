@@ -23,7 +23,7 @@ int serverIO(SOCKET ClientSocket) {
             }
             printf("Bytes Sent: %d\n", iSendResult);
         } else if (iResult == 0)
-            printf("SERVER Connection Closing...\n");
+            printf("Connection Closing...\n");
         else {
             printf("SERVER RECV FAILED: %d\n", WSAGetLastError());
             closesocket(ClientSocket);
