@@ -11,9 +11,10 @@ int serverIO(SOCKET ClientSocket)
     // Receive until the client closes the connection
     do
     {
-        iResult = recv(ClientSocket, recvbuf, DEFAULT_BUFLEN, 0);
+        iResult = recv(ClientSocket, recvbuf, DEFAULT_BUFLEN - 1, 0);
         if (iResult > 0)
         {
+            recvbuf[iResult] = '\0'; //Null-terminate the buffer
             printf("Bytes Received: %d\n", iResult);
             printf("%s\n", recvbuf);
 
@@ -34,7 +35,7 @@ int serverIO(SOCKET ClientSocket)
         }
         else
         {
-            printf("SERVER RECV FAILED: %d\n", WSAGetLastError());
+            printf("RECV FAILED: %d\n", WSAGetLastError());
             closesocket(ClientSocket);
             WSACleanup();
             return 1;

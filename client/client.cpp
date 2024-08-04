@@ -11,7 +11,7 @@ int main()
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0)
     {
-        std::cout << "WSASTARTUP FAILED: " << iResult << std::endl;
+        printf("WSASTARTUP FAILED: %d",iResult);
         return 1;
     }
 
