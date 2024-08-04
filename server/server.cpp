@@ -2,14 +2,7 @@
 #include "../common/common.h"      // Include the common header file
 #pragma comment(lib, "ws2_32.lib") // Link with the Winsock library
 
-/**
- * @brief Handles the server-side I/O operations.
- *
- * Receives data from the client, echoes it back, and handles errors.
- *
- * @param ClientSocket The socket connected to the client.
- * @return 0 if the operations were successful, otherwise a non-zero value.
- */
+
 int serverIO(SOCKET ClientSocket)
 {
     char recvbuf[DEFAULT_BUFLEN];
@@ -50,15 +43,7 @@ int serverIO(SOCKET ClientSocket)
     return 0;
 }
 
-/**
- * @brief The entry point of the server program.
- *
- * Initializes the Winsock library, sets up the necessary addrinfo instances,
- * creates a listening socket, accepts a client connection, handles I/O operations,
- * and cleans up the resources before exiting.
- *
- * @return 0 if the program executed successfully, otherwise a non-zero value.
- */
+
 int main()
 {
     SOCKET ListenSocket = INVALID_SOCKET;

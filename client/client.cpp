@@ -3,19 +3,11 @@
 
 #pragma comment(lib, "ws2_32.lib") // Link with the Winsock library
 
-/**
- * @brief The entry point of the program.
- *
- * Initializes the Winsock library, sets up the necessary addrinfo instances,
- * creates a socket, connects to the server, sends a message to the server, receives data
- * from the server, and cleans up the resources before exiting.
- *
- * @return 0 if the program executed successfully, otherwise a non-zero value.
- */
 int main()
 {
     // Initialize the Winsock library
     WSADATA wsaData;
+    SOCKET ConnectSocket = INVALID_SOCKET;
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0)
     {
@@ -41,32 +33,31 @@ int main()
         return 1;
     }
 
-    // Create a socket for connecting to the server
-    SOCKET ConnectSocket = INVALID_SOCKET;
-    ptr = result;
-    ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+    // Attempt to connect to an address until one succeeds
+    for(ptr=result; ptr != NULL ;ptr=ptr->ai_next) {
 
-    if (ConnectSocket == INVALID_SOCKET)
-    {
-        printf("Error at socket(): %d\n", WSAGetLastError());
-        freeaddrinfo(result);
-        WSACleanup();
-        return 1;
+        // Create a SOCKET for connecting to server
+        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
+                               ptr->ai_protocol);
+        if (ConnectSocket == INVALID_SOCKET) {
+            printf("SOCKET FAILED: %ld\n", WSAGetLastError());
+            WSACleanup();
+            return 1;
+        }
+
+        // Connect to server.
+        iResult = connect( ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
+        if (iResult == SOCKET_ERROR) {
+            closesocket(ConnectSocket);
+            ConnectSocket = INVALID_SOCKET;
+            continue;
+        }
+        break;
     }
 
-    // Connect to the server
-    iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
-    if (iResult == SOCKET_ERROR)
-    {
-        closesocket(ConnectSocket);
-        ConnectSocket = INVALID_SOCKET;
-    }
-    printf("Connecting to Server...\n");
-    // TODO: Should try next address if fails but instead free resources
     freeaddrinfo(result);
 
-    if (ConnectSocket == INVALID_SOCKET)
-    {
+    if (ConnectSocket == INVALID_SOCKET) {
         printf("Unable to connect to server!\n");
         WSACleanup();
         return 1;
