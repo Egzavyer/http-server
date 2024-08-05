@@ -4,6 +4,8 @@
 #include <vector>
 #pragma comment(lib, "ws2_32.lib")
 
+size_t current;
+
 enum class ParseState{
     RequestLine,
     Headers,
@@ -14,6 +16,7 @@ enum class ParseState{
 std::string extractRequestLine(const std::string& request) {
     std::string requestLine;
     std::size_t requestLineEnd = request.find("\r\n", 0);
+    current = requestLineEnd;
     if (requestLineEnd != std::string::npos)
         requestLine = request.substr(0, requestLineEnd);
     return requestLine;
@@ -36,10 +39,22 @@ std::vector<std::string> parseRequestLine(std::string requestLine){
     return splitRequestLine;
 }
 
-void parseHeaders(std::string headers){
-    std::cout << "HEADERS:\n";
-    std::cout << headers << "\n";
+std::string extractHeader(const std::string& request) {
+    std::string headerLine;
+    std::size_t headerEnd = request.find("\r\n");
 
+    if (headerEnd != std::string::npos)
+        headerLine = request.substr(0, headerEnd);
+    return headerLine;
+}
+
+std::pair<std::string,std::string> parseHeaders(std::string header){
+
+    std::pair<std::string,std::string> parts;
+    std::size_t firstPartEnd = header.find(':');
+    parts.first = header.substr(0,firstPartEnd);
+    parts.second = header.substr(firstPartEnd+2, header.size()-firstPartEnd+2);
+    return parts;
 }
 
 void parseHTTPRequest(std::string request) {
@@ -57,26 +72,36 @@ void parseHTTPRequest(std::string request) {
                 method = parts[0];
                 uri = parts[1];
                 version = parts[2];
+                request = request.substr(requestLine.length() + 2);
                 state = ParseState::Headers;
                 std::cout << "Method:" << method << "\n";
                 std::cout << "URI:" << uri << "\n";
                 std::cout << "Version:" << version << "\n";
+                break;
+            }
+
+            case ParseState::Headers: {
+                while (!request.empty()) {
+                    std::string header = extractHeader(request);
+                    request = request.substr(header.length() + 2);
+                    if (header.empty()){
+                        state = ParseState::Body;
+                        break;
+                    }
+                    auto parts = parseHeaders(header);
+                    std::cout << "First:" << parts.first << "\n";
+                    std::cout << "Second:" << parts.second << "\n";
+                    headers[parts.first] = parts.second;
+                }
+                break;
+            }
+            case ParseState::Body:
                 std::cout << "Remaining:" << request << "\n";
                 break;
-            }
-            case ParseState::Headers: {
-                break;
-            }
 
-            case ParseState::Body: {
+            case ParseState::Done:
                 break;
-            }
-
-            case ParseState::Done: {
-                break;
-            }
         }
-        break;
     }
 }
 
@@ -96,12 +121,7 @@ int serverIO(SOCKET ClientSocket)
             printf("Bytes Received: %d\n", iResult);
             printf("%s\n", recvbuf);
             std::string data(recvbuf);
-            parseHTTPRequest(data); //TEST
-
-
-            //std::size_t headersEnd = data.find("\r\n\r\n",requestLineEnd+1);
-            //std::string headers = data.substr(requestLineEnd+2, headersEnd-(requestLineEnd+4));
-            //parseHeaders(headers);
+            parseHTTPRequest(data);
 
             // Echo the buffer back to the client
             iSendResult = send(ClientSocket, recvbuf, iResult, 0);
