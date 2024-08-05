@@ -1,25 +1,83 @@
 #include "server.h"
 #include "../common/common.h"
+#include <unordered_map>
+#include <vector>
 #pragma comment(lib, "ws2_32.lib")
 
-void parseRequestLine(std::string requestLine){
+enum class ParseState{
+    RequestLine,
+    Headers,
+    Body,
+    Done
+};
+
+std::string extractRequestLine(const std::string& request) {
+    std::string requestLine;
+    std::size_t requestLineEnd = request.find("\r\n", 0);
+    if (requestLineEnd != std::string::npos)
+        requestLine = request.substr(0, requestLineEnd);
+    return requestLine;
+}
+
+std::vector<std::string> parseRequestLine(std::string requestLine){
+    std::vector<std::string> splitRequestLine(3);
+
     std::cout << "REQUEST LINE:\n";
     std::cout << requestLine << "\n";
 
     std::size_t methodEnd = requestLine.find(' ', 0);
-    std::string method = requestLine.substr(0,methodEnd);
+    splitRequestLine[0] = requestLine.substr(0,methodEnd);
 
-    std::size_t urlEnd = requestLine.find(' ', methodEnd+1);
-    std::string url = requestLine.substr(methodEnd+1, urlEnd-(methodEnd+1));
+    std::size_t uriEnd = requestLine.find(' ', methodEnd+1);
+    splitRequestLine[1] = requestLine.substr(methodEnd+1, uriEnd-(methodEnd+1));
 
-    std::string httpVersion = requestLine.substr(urlEnd+1);
+    splitRequestLine[2] = requestLine.substr(uriEnd+1);
+
+    return splitRequestLine;
 }
 
 void parseHeaders(std::string headers){
     std::cout << "HEADERS:\n";
     std::cout << headers << "\n";
 
+}
 
+void parseHTTPRequest(std::string request) {
+    ParseState state = ParseState::RequestLine;
+    std::string requestLine;
+    std::unordered_map<std::string,std::string> headers;
+    std::string body;
+
+    while (!request.empty()) {
+        switch (state) {
+            case ParseState::RequestLine: {
+                std::string method, uri, version;
+                requestLine = extractRequestLine(request);
+                auto parts = parseRequestLine(requestLine);
+                method = parts[0];
+                uri = parts[1];
+                version = parts[2];
+                state = ParseState::Headers;
+                std::cout << "Method:" << method << "\n";
+                std::cout << "URI:" << uri << "\n";
+                std::cout << "Version:" << version << "\n";
+                std::cout << "Remaining:" << request << "\n";
+                break;
+            }
+            case ParseState::Headers: {
+                break;
+            }
+
+            case ParseState::Body: {
+                break;
+            }
+
+            case ParseState::Done: {
+                break;
+            }
+        }
+        break;
+    }
 }
 
 
@@ -34,19 +92,16 @@ int serverIO(SOCKET ClientSocket)
         iResult = recv(ClientSocket, recvbuf, DEFAULT_BUFLEN - 1, 0);
         if (iResult > 0)
         {
+            recvbuf[iResult] = '\0'; //Null-terminate the buffer
             printf("Bytes Received: %d\n", iResult);
             printf("%s\n", recvbuf);
             std::string data(recvbuf);
+            parseHTTPRequest(data); //TEST
 
-            std::size_t requestLineEnd = data.find("\r\n",0);
-            std::string requestLine = data.substr(0,requestLineEnd);
-            parseRequestLine(requestLine);
 
-            std::size_t headersEnd = data.find("\r\n\r\n",requestLineEnd+1);
-            std::string headers = data.substr(requestLineEnd+2, headersEnd-(requestLineEnd+4));
-            parseHeaders(headers);
-
-            recvbuf[iResult] = '\0'; //Null-terminate the buffer
+            //std::size_t headersEnd = data.find("\r\n\r\n",requestLineEnd+1);
+            //std::string headers = data.substr(requestLineEnd+2, headersEnd-(requestLineEnd+4));
+            //parseHeaders(headers);
 
             // Echo the buffer back to the client
             iSendResult = send(ClientSocket, recvbuf, iResult, 0);
