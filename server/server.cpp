@@ -1,10 +1,6 @@
 #include "server.h"
 #include "../common/common.h"
-#include <unordered_map>
-#include <vector>
 #pragma comment(lib, "ws2_32.lib")
-
-size_t current;
 
 enum class ParseState{
     RequestLine,
@@ -16,16 +12,15 @@ enum class ParseState{
 std::string extractRequestLine(const std::string& request) {
     std::string requestLine;
     std::size_t requestLineEnd = request.find("\r\n", 0);
-    current = requestLineEnd;
     if (requestLineEnd != std::string::npos)
         requestLine = request.substr(0, requestLineEnd);
     return requestLine;
 }
 
-std::vector<std::string> parseRequestLine(std::string requestLine){
+std::vector<std::string> parseRequestLine(const std::string& requestLine){
     std::vector<std::string> splitRequestLine(3);
 
-    std::cout << "REQUEST LINE:\n";
+    std::cout << "-----------------------------------\nREQUEST LINE:\n";
     std::cout << requestLine << "\n";
 
     std::size_t methodEnd = requestLine.find(' ', 0);
@@ -48,7 +43,7 @@ std::string extractHeader(const std::string& request) {
     return headerLine;
 }
 
-std::pair<std::string,std::string> parseHeaders(std::string header){
+std::pair<std::string,std::string> parseHeaders(const std::string& header){
 
     std::pair<std::string,std::string> parts;
     std::size_t firstPartEnd = header.find(':');
@@ -76,11 +71,12 @@ void parseHTTPRequest(std::string request) {
                 state = ParseState::Headers;
                 std::cout << "Method:" << method << "\n";
                 std::cout << "URI:" << uri << "\n";
-                std::cout << "Version:" << version << "\n";
+                std::cout << "Version:" << version << "\n\n";
                 break;
             }
 
             case ParseState::Headers: {
+                std::cout << "HEADERS:\r\n";
                 while (!request.empty()) {
                     std::string header = extractHeader(request);
                     request = request.substr(header.length() + 2);
@@ -89,22 +85,27 @@ void parseHTTPRequest(std::string request) {
                         break;
                     }
                     auto parts = parseHeaders(header);
-                    std::cout << "First:" << parts.first << "\n";
-                    std::cout << "Second:" << parts.second << "\n";
+                    std::cout << parts.first << " : " << parts.second << "\n";
                     headers[parts.first] = parts.second;
                 }
                 break;
             }
             case ParseState::Body:
-                std::cout << "Remaining:" << request << "\n";
+                if (headers.count("Content-Length")) {
+                    int contentLength = std::stoi(headers["Content-Length"]);
+                    body = request.substr(0,contentLength);
+                    std::cout << "\nBody: " << body << "\n-----------------------------------\n";
+                    request = request.substr(body.length());
+                    state = ParseState::Done;
+                }
                 break;
 
             case ParseState::Done:
+                std::cout << "PARSING COMPLETE\n";
                 break;
         }
     }
 }
-
 
 int serverIO(SOCKET ClientSocket)
 {
@@ -154,7 +155,7 @@ int main()
 {
     SOCKET ListenSocket = INVALID_SOCKET;
     SOCKET ClientSocket = INVALID_SOCKET;
-    struct addrinfo *result = NULL, *ptr = NULL, hints;
+    struct addrinfo *result = nullptr, hints;
 
     // Initialize the Winsock library
     WSADATA wsaData;
@@ -185,7 +186,7 @@ int main()
     ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (ListenSocket == INVALID_SOCKET)
     {
-        printf("Error at socket(): %ld\n", WSAGetLastError());
+        printf("Error at socket(): %d\n", WSAGetLastError());
         freeaddrinfo(result);
         WSACleanup();
         return 1;
@@ -214,7 +215,7 @@ int main()
 
     // TODO: Listen and accept more than one connection. Handle using threads
     // Accept a client socket
-    ClientSocket = accept(ListenSocket, NULL, NULL);
+    ClientSocket = accept(ListenSocket, nullptr, nullptr);
     if (ClientSocket == INVALID_SOCKET)
     {
         printf("ACCEPT FAILED: %d\n", WSAGetLastError());

@@ -16,7 +16,7 @@ int main()
     }
 
     // Initialize addrinfo instances for later
-    struct addrinfo *result = NULL, *ptr = NULL, hints;
+    struct addrinfo *result = nullptr, *ptr = nullptr, hints;
 
     // Set the parameters of hints to specify the type of socket
     ZeroMemory(&hints, sizeof(hints));
@@ -34,13 +34,13 @@ int main()
     }
 
     // Attempt to connect to an address until one succeeds
-    for(ptr=result; ptr != NULL ;ptr=ptr->ai_next) {
+    for(ptr=result; ptr != nullptr ;ptr=ptr->ai_next) {
 
         // Create a SOCKET for connecting to server
         ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
                                ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET) {
-            printf("SOCKET FAILED: %ld\n", WSAGetLastError());
+            printf("SOCKET FAILED: %d\n", WSAGetLastError());
             WSACleanup();
             return 1;
         }
@@ -65,9 +65,18 @@ int main()
     }
 
     // Send a message to the server
-    const char *sendbuf = "GET /index.html HTTP/1.1\r\n"
+    //const char *sendbuf = "GET /index.html HTTP/1.1\r\n"
                           "Host: www.example.com\r\n"
                           "Accept: text/html\r\n\r\n";
+    const char *sendbuf = "GET /index.html HTTP/1.1\r\n"
+                          "Host: www.example.com\r\n"
+                          "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\r\n"
+                          "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n"
+                          "Accept-Language: en-US,en;q=0.5\r\n"
+                          "Accept-Encoding: gzip, deflate\r\n"
+                          "Content-Length: 4\r\n"
+                          "Connection: keep-alive\r\n\r\n"
+                          "MEOW";
     iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
     if (iResult == SOCKET_ERROR)
     {
