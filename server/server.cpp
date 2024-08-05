@@ -81,6 +81,7 @@ void parseHTTPRequest(std::string request) {
                     std::string header = extractHeader(request);
                     request = request.substr(header.length() + 2);
                     if (header.empty()){
+                        std::cout << "\nHEADERS DONE\n";
                         state = ParseState::Body;
                         break;
                     }
@@ -90,15 +91,18 @@ void parseHTTPRequest(std::string request) {
                 }
                 break;
             }
-            case ParseState::Body:
+            case ParseState::Body: {
+                //std::cout << request << std::endl;
+                //std::cout << request.length() << std::endl;
                 if (headers.count("Content-Length")) {
                     int contentLength = std::stoi(headers["Content-Length"]);
-                    body = request.substr(0,contentLength);
+                    body = request.substr(0, contentLength);
                     std::cout << "\nBody: " << body << "\n-----------------------------------\n";
                     request = request.substr(body.length());
                     state = ParseState::Done;
                 }
                 break;
+            }
 
             case ParseState::Done:
                 std::cout << "PARSING COMPLETE\n";
@@ -110,6 +114,7 @@ void parseHTTPRequest(std::string request) {
 int serverIO(SOCKET ClientSocket)
 {
     char recvbuf[DEFAULT_BUFLEN];
+    //TODO: DELETE const char* sendbuf;
     int iResult, iSendResult;
 
     // Receive until the client closes the connection
@@ -124,8 +129,25 @@ int serverIO(SOCKET ClientSocket)
             std::string data(recvbuf);
             parseHTTPRequest(data);
 
-            // Echo the buffer back to the client
-            iSendResult = send(ClientSocket, recvbuf, iResult, 0);
+            //HTTP Response
+            const char* htmlContent = "<!DOCTYPE html>\n"
+                                      "<html>\n"
+                                      "<head>\n"
+                                      "    <title>Sample Page</title>\n"
+                                      "</head>\n"
+                                      "<body>\n"
+                                      "    <h1>Hello, World!</h1>\n"
+                                      "</body>\n"
+                                      "</html>";
+            int contentLength = (int)strlen(htmlContent);
+            // HTTP Response
+            std::string httpResponse = "HTTP/1.1 200 OK\r\n"
+                                       "Content-Type: text/html\r\n"
+                                       "Content-Length: " + std::to_string(contentLength) + "\r\n\r\n" +
+                                       htmlContent;
+            int sendbuflen = (int)httpResponse.length();
+            iSendResult = send(ClientSocket, httpResponse.c_str(),sendbuflen,0 );
+
             if (iSendResult == SOCKET_ERROR)
             {
                 printf("SEND FAILED: %d\n", WSAGetLastError());

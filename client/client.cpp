@@ -104,6 +104,7 @@ int main()
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if (iResult > 0)
         {
+            recvbuf[iResult] = '\0';
             printf("Bytes Received: %d\n", iResult);
             printf("%s\n", recvbuf);
         }
