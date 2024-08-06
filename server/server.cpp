@@ -113,9 +113,11 @@ void parseHTTPRequest(std::string request) {
 
 int serverIO(SOCKET ClientSocket)
 {
+    std::string requestData;
     char recvbuf[DEFAULT_BUFLEN];
-    //TODO: DELETE const char* sendbuf;
     int iResult, iSendResult;
+
+    //TODO: Handle Connection header (keep-alive)
 
     // Receive until the client closes the connection
     do
@@ -126,9 +128,15 @@ int serverIO(SOCKET ClientSocket)
             recvbuf[iResult] = '\0'; //Null-terminate the buffer
             printf("Bytes Received: %d\n", iResult);
             printf("%s\n", recvbuf);
-            std::string data(recvbuf);
-            parseHTTPRequest(data);
+            requestData.append(recvbuf,iResult);
 
+            //std::string data(recvbuf);
+            if (requestData.find("\r\n\r\n") != std::string::npos) {
+                parseHTTPRequest(requestData);
+                requestData.clear();
+            }
+
+            //TODO: GET from file and handle other request methods
             //HTTP Response
             const char* htmlContent = "<!DOCTYPE html>\n"
                                       "<html>\n"

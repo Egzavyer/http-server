@@ -16,4 +16,3 @@ add_executable(ClientExecutable
 target_link_libraries(ServerExecutable PRIVATE ws2_32)
 
 target_link_libraries(ClientExecutable PRIVATE ws2_32)
-
