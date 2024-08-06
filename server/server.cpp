@@ -53,12 +53,13 @@ std::pair<std::string,std::string> parseHeaders(const std::string& header){
 }
 
 void parseHTTPRequest(std::string request) {
+    bool completeRequestReceived = false;
     ParseState state = ParseState::RequestLine;
     std::string requestLine;
     std::unordered_map<std::string,std::string> headers;
     std::string body;
 
-    while (!request.empty()) {
+    while (!completeRequestReceived) {
         switch (state) {
             case ParseState::RequestLine: {
                 std::string method, uri, version;
@@ -77,10 +78,14 @@ void parseHTTPRequest(std::string request) {
 
             case ParseState::Headers: {
                 std::cout << "HEADERS:\r\n";
+                bool allHeadersReceived = false;
                 while (!request.empty()) {
                     std::string header = extractHeader(request);
                     request = request.substr(header.length() + 2);
-                    if (header.empty()){
+                    size_t headersEnd = request.find("\r\n\r\n");
+                    if (headersEnd != std::string::npos)
+                        allHeadersReceived = true;
+                    if (header.empty() && allHeadersReceived){
                         std::cout << "\nHEADERS DONE\n";
                         state = ParseState::Body;
                         break;
@@ -92,13 +97,22 @@ void parseHTTPRequest(std::string request) {
                 break;
             }
             case ParseState::Body: {
-                //std::cout << request << std::endl;
+                std::cout << request << std::endl;
                 //std::cout << request.length() << std::endl;
                 if (headers.count("Content-Length")) {
+                    bool allBodyReceived = false;
                     int contentLength = std::stoi(headers["Content-Length"]);
+                    if (request.length() == contentLength) {
+                        allBodyReceived = true;
+                    }
                     body = request.substr(0, contentLength);
                     std::cout << "\nBody: " << body << "\n-----------------------------------\n";
-                    request = request.substr(body.length());
+                    if (allBodyReceived) {
+                        request = request.substr(body.length());
+                        state = ParseState::Done;
+
+                    }
+                } else {
                     state = ParseState::Done;
                 }
                 break;
@@ -106,6 +120,7 @@ void parseHTTPRequest(std::string request) {
 
             case ParseState::Done:
                 std::cout << "PARSING COMPLETE\n";
+                completeRequestReceived = true;
                 break;
         }
     }
@@ -134,36 +149,37 @@ int serverIO(SOCKET ClientSocket)
             if (requestData.find("\r\n\r\n") != std::string::npos) {
                 parseHTTPRequest(requestData);
                 requestData.clear();
-            }
 
-            //TODO: GET from file and handle other request methods
-            //HTTP Response
-            const char* htmlContent = "<!DOCTYPE html>\n"
-                                      "<html>\n"
-                                      "<head>\n"
-                                      "    <title>Sample Page</title>\n"
-                                      "</head>\n"
-                                      "<body>\n"
-                                      "    <h1>Hello, World!</h1>\n"
-                                      "</body>\n"
-                                      "</html>";
-            int contentLength = (int)strlen(htmlContent);
-            // HTTP Response
-            std::string httpResponse = "HTTP/1.1 200 OK\r\n"
-                                       "Content-Type: text/html\r\n"
-                                       "Content-Length: " + std::to_string(contentLength) + "\r\n\r\n" +
-                                       htmlContent;
-            int sendbuflen = (int)httpResponse.length();
-            iSendResult = send(ClientSocket, httpResponse.c_str(),sendbuflen,0 );
 
-            if (iSendResult == SOCKET_ERROR)
-            {
-                printf("SEND FAILED: %d\n", WSAGetLastError());
-                closesocket(ClientSocket);
-                WSACleanup();
-                return 1;
+                //TODO: GET from file and handle other request methods
+                //HTTP Response
+                const char* htmlContent = "<!DOCTYPE html>\n"
+                                          "<html>\n"
+                                          "<head>\n"
+                                          "    <title>Sample Page</title>\n"
+                                          "</head>\n"
+                                          "<body>\n"
+                                          "    <h1>Hello, World!</h1>\n"
+                                          "</body>\n"
+                                          "</html>";
+                int contentLength = (int)strlen(htmlContent);
+                // HTTP Response
+                std::string httpResponse = "HTTP/1.1 200 OK\r\n"
+                                           "Content-Type: text/html\r\n"
+                                           "Content-Length: " + std::to_string(contentLength) + "\r\n\r\n" +
+                                           htmlContent;
+                int sendbuflen = (int)httpResponse.length();
+                iSendResult = send(ClientSocket, httpResponse.c_str(),sendbuflen,0 );
+
+                if (iSendResult == SOCKET_ERROR)
+                {
+                    printf("SEND FAILED: %d\n", WSAGetLastError());
+                    closesocket(ClientSocket);
+                    WSACleanup();
+                    return 1;
+                }
+                printf("Bytes Sent: %d\n", iSendResult);
             }
-            printf("Bytes Sent: %d\n", iSendResult);
         }
         else if (iResult == 0)
         {
