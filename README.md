@@ -27,13 +27,19 @@ A simple HTTP server and client implementation in C++.
 - **Start the Server:**
   ```bash
   ServerExecutable.exe
+  ```
   or
+  
+  ```bash
   ./ServerExecutable
   ```
 - **Run the Client:**
   ```bash
   ClientExecutable.exe
+  ```
   or
+  
+  ```bash
   ./ClientExecutable
   ```
 
