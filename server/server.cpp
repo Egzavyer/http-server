@@ -9,6 +9,17 @@ enum class ParseState{
     Done
 };
 
+std::string readHTMLFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file) {
+        std::cerr << "ERROR: Unable to open file: " << filename << std::endl;
+        return "";
+    }
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
+
 std::string extractRequestLine(const std::string& request) {
     std::string requestLine;
     std::size_t requestLineEnd = request.find("\r\n", 0);
@@ -68,6 +79,7 @@ void parseHTTPRequest(std::string request) {
                 method = parts[0];
                 uri = parts[1];
                 version = parts[2];
+                std::string htmlContent = uri;
                 request = request.substr(requestLine.length() + 2);
                 state = ParseState::Headers;
                 std::cout << "Method:" << method << "\n";
@@ -145,7 +157,6 @@ int serverIO(SOCKET ClientSocket)
             printf("%s\n", recvbuf);
             requestData.append(recvbuf,iResult);
 
-            //std::string data(recvbuf);
             if (requestData.find("\r\n\r\n") != std::string::npos) {
                 parseHTTPRequest(requestData);
                 requestData.clear();
@@ -153,7 +164,13 @@ int serverIO(SOCKET ClientSocket)
 
                 //TODO: GET from file and handle other request methods
                 //HTTP Response
-                const char* htmlContent = "<!DOCTYPE html>\n"
+                std::string htmlContent = readHTMLFile("../wwwroot/index.html");
+                if (htmlContent.empty()) {
+                    const char* errorContent = "<html><body><h1>500 Internal Server Error</h1></body></html>";
+                    htmlContent = errorContent;
+                }
+
+                //const char* htmlContent = "<!DOCTYPE html>\n"
                                           "<html>\n"
                                           "<head>\n"
                                           "    <title>Sample Page</title>\n"
@@ -162,7 +179,7 @@ int serverIO(SOCKET ClientSocket)
                                           "    <h1>Hello, World!</h1>\n"
                                           "</body>\n"
                                           "</html>";
-                int contentLength = (int)strlen(htmlContent);
+                int contentLength = (int)htmlContent.length();
                 // HTTP Response
                 std::string httpResponse = "HTTP/1.1 200 OK\r\n"
                                            "Content-Type: text/html\r\n"
@@ -191,8 +208,7 @@ int serverIO(SOCKET ClientSocket)
             closesocket(ClientSocket);
             WSACleanup();
             return 1;
-        }
-    } while (iResult > 0);
+        }    } while (iResult > 0);
     return 0;
 }
 
