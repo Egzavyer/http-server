@@ -2,6 +2,7 @@
 #include "../common/common.h"
 #pragma comment(lib, "ws2_32.lib")
 
+std::string method, uri, version;
 enum class ParseState{
     RequestLine,
     Headers,
@@ -73,12 +74,15 @@ void parseHTTPRequest(std::string request) {
     while (!completeRequestReceived) {
         switch (state) {
             case ParseState::RequestLine: {
-                std::string method, uri, version;
+                //std::string method, uri, version;
                 requestLine = extractRequestLine(request);
                 auto parts = parseRequestLine(requestLine);
                 method = parts[0];
                 uri = parts[1];
                 version = parts[2];
+                if (uri == "/") {
+                    uri = "/index.html";
+                }
                 std::string htmlContent = uri;
                 request = request.substr(requestLine.length() + 2);
                 state = ParseState::Headers;
@@ -110,7 +114,6 @@ void parseHTTPRequest(std::string request) {
             }
             case ParseState::Body: {
                 std::cout << request << std::endl;
-                //std::cout << request.length() << std::endl;
                 if (headers.count("Content-Length")) {
                     bool allBodyReceived = false;
                     int contentLength = std::stoi(headers["Content-Length"]);
@@ -164,21 +167,12 @@ int serverIO(SOCKET ClientSocket)
 
                 //TODO: GET from file and handle other request methods
                 //HTTP Response
-                std::string htmlContent = readHTMLFile("../wwwroot/index.html");
+                std::string filename = "../public" + uri;
+                std::string htmlContent = readHTMLFile(filename);
                 if (htmlContent.empty()) {
                     const char* errorContent = "<html><body><h1>500 Internal Server Error</h1></body></html>";
                     htmlContent = errorContent;
                 }
-
-                //const char* htmlContent = "<!DOCTYPE html>\n"
-                                          "<html>\n"
-                                          "<head>\n"
-                                          "    <title>Sample Page</title>\n"
-                                          "</head>\n"
-                                          "<body>\n"
-                                          "    <h1>Hello, World!</h1>\n"
-                                          "</body>\n"
-                                          "</html>";
                 int contentLength = (int)htmlContent.length();
                 // HTTP Response
                 std::string httpResponse = "HTTP/1.1 200 OK\r\n"
