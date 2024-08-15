@@ -12,8 +12,10 @@ enum class ParseState{
 
 std::string readHTMLFile(const std::string& filename) {
     std::ifstream file(filename);
-    if (!file) {
+    if (!file && filename != "../public/favicon.ico") {
         std::cerr << "ERROR: Unable to open file: " << filename << std::endl;
+        return "";
+    } else if (filename == "../public/favicon.ico"){ //TODO remove when able to handle serving favicon
         return "";
     }
     std::stringstream buffer;
@@ -167,6 +169,7 @@ int serverIO(SOCKET ClientSocket)
 
                 //TODO: GET from file and handle other request methods
                 //HTTP Response
+
                 std::string filename = "../public" + uri;
                 std::string htmlContent = readHTMLFile(filename);
                 if (htmlContent.empty()) {
