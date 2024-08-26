@@ -4,6 +4,8 @@
 #include "connection.h"
 
 class Server {
+public:
+    static bool receiveData(const SOCKET* ClientSocket);
 
 };
 

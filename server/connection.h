@@ -13,7 +13,7 @@ public:
     Connection();
     bool setupConnection();
     SOCKET getListenSocket() const;
-    SOCKET getClientSocket() const;
+    const SOCKET* getClientSocket() const;
     char address[256]{};
 
 private:

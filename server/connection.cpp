@@ -15,9 +15,10 @@ bool Connection::initialiseWinsock() {
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0)
     {
-        printf("WSASTARTUP FAILED: %d",iResult);
+        std::cerr << "WSAStartup FAILED: " << iResult << '\n';
         return false;
     }
+    std::cout << "WSAStartup: OK...\n";
     return true;
 }
 
@@ -34,18 +35,20 @@ bool Connection::createSocket() {
 
     iResult = getaddrinfo(nullptr, DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
-        std::cerr << "getaddrinfo failed: " << iResult << '\n';
+        std::cerr << "getaddrinfo FAILED: " << iResult << '\n';
         WSACleanup();
         return false;
     }
+    std::cout << "getaddrinfo: OK...\n";
 
     ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (ListenSocket == INVALID_SOCKET) {
-        std::cerr << "socket failed: " << WSAGetLastError() << '\n';
+        std::cerr << "socket FAILED: " << WSAGetLastError() << '\n';
         freeaddrinfo(result);
         WSACleanup();
         return false;
     }
+    std::cout << "socket: OK...\n";
     return true;
 }
 
@@ -53,12 +56,13 @@ bool Connection::bindSocket()  {
     iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
 
     if (iResult == SOCKET_ERROR) {
-        std::cerr << "bind failed: " << WSAGetLastError() << '\n';
+        std::cerr << "bind FAILED: " << WSAGetLastError() << '\n';
         freeaddrinfo(result);
         closesocket(ListenSocket);
         WSACleanup();
         return false;
     }
+    std::cout << "bind: OK...\n";
     iResult = WSAAddressToString(result->ai_addr, result->ai_addrlen, nullptr, this->address,&this->addressSize);//TODO: REMOVE
     if (iResult != 0) {
         std::cout << "addresstostring failed: " << WSAGetLastError() << '\n';
@@ -76,6 +80,7 @@ bool Connection::listenOnSocket() const {
         WSACleanup();
         return false;
     }
+    std::cout << "listen: OK...\n";
     return true;
 }
 
@@ -102,8 +107,9 @@ SOCKET Connection::getListenSocket() const {
     return this->ListenSocket;
 }
 
-SOCKET Connection::getClientSocket() const {
-    return this->ClientSocket;
+const SOCKET* Connection::getClientSocket() const {
+    const SOCKET *socketPointer = &this->ClientSocket;
+    return socketPointer;
 }
 
 
