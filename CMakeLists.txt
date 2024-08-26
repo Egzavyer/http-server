@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 add_executable(ServerExecutable
         server/server.cpp
         common/common.cpp
+        server/connection.cpp
 )
 
 add_executable(ClientExecutable
