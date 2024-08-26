@@ -14,15 +14,17 @@ public:
     bool setupConnection();
     SOCKET getListenSocket() const;
     SOCKET getClientSocket() const;
+    char address[256]{};
 
 private:
     struct addrinfo *result, *ptr, hints{};
     static int iResult;
     SOCKET ListenSocket,ClientSocket;
+    ULONG addressSize;
 
     static bool initialiseWinsock();
     bool createSocket();
-    bool bindSocket() const;
+    bool bindSocket();
     bool listenOnSocket() const;
     bool acceptConnection();
 };

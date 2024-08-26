@@ -4,7 +4,6 @@
 
 int main() {
     Connection connection;
-    std::cout << connection.setupConnection() << '\n';
-    std::cout << connection.getClientSocket() << '\n';
-    std::cout << connection.getListenSocket() << '\n';
+    if (connection.setupConnection())
+        std::cout << "Successful Connection on: " << connection.address << '\n';
 }

@@ -7,6 +7,7 @@ Connection::Connection() {
     ClientSocket = INVALID_SOCKET;
     ptr = nullptr;
     result = nullptr;
+    addressSize = 256;
 }
 
 bool Connection::initialiseWinsock() {
@@ -48,8 +49,9 @@ bool Connection::createSocket() {
     return true;
 }
 
-bool Connection::bindSocket() const {
+bool Connection::bindSocket()  {
     iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+
     if (iResult == SOCKET_ERROR) {
         std::cerr << "bind failed: " << WSAGetLastError() << '\n';
         freeaddrinfo(result);
@@ -57,6 +59,12 @@ bool Connection::bindSocket() const {
         WSACleanup();
         return false;
     }
+    iResult = WSAAddressToString(result->ai_addr, result->ai_addrlen, nullptr, this->address,&this->addressSize);//TODO: REMOVE
+    if (iResult != 0) {
+        std::cout << "addresstostring failed: " << WSAGetLastError() << '\n';
+        return false;
+    }
+
     freeaddrinfo(result);
     return true;
 }
@@ -91,11 +99,11 @@ bool Connection::setupConnection() {
 }
 
 SOCKET Connection::getListenSocket() const {
-    return ListenSocket;
+    return this->ListenSocket;
 }
 
 SOCKET Connection::getClientSocket() const {
-    return ClientSocket;
+    return this->ClientSocket;
 }
 
 
