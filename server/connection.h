@@ -20,7 +20,7 @@ private:
     struct addrinfo *result, *ptr, hints{};
     static int iResult;
     SOCKET ListenSocket,ClientSocket;
-    ULONG addressSize;
+    static ULONG addressSize;
 
     static bool initialiseWinsock();
     bool createSocket();

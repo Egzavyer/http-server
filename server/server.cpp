@@ -5,7 +5,6 @@
 bool Server::receiveData(const SOCKET* ClientSocket) {
     char recvbuf[DEFAULT_BUFLEN];
     int iResult, iSendResult;
-
     do {
         iResult = recv(*ClientSocket, recvbuf, sizeof(recvbuf),0);
         if (iResult > 0) {
@@ -31,6 +30,17 @@ bool Server::receiveData(const SOCKET* ClientSocket) {
     return true;
 }
 
+void Server::shutdownServer(const SOCKET *ClientSocket) {
+    int iResult = shutdown(*ClientSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        std::cerr << "shutdown FAILED: " << WSAGetLastError() << '\n';
+        closesocket(*ClientSocket);
+        WSACleanup();
+    }
+    closesocket(*ClientSocket);
+    WSACleanup();
+}
+
 int main() {
     Connection connection;
     if (connection.setupConnection()) {
@@ -38,8 +48,15 @@ int main() {
     } else {
         std::cerr << "Connection FAILED\n";
     }
+    
     if (!Server::receiveData(connection.getClientSocket())){
         std::cerr << "receiveData FAILED\n";
     }
 
+    std::cout << "Shutting Down Server...\n";
+    Server::shutdownServer(connection.getClientSocket());
+
+    WSACleanup();
+    std::cout << "Server Shutdown: OK...\n";
+    return 0;
 }

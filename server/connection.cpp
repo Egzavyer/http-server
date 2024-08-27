@@ -1,13 +1,14 @@
 #include "connection.h"
 
 int Connection::iResult;
+ULONG Connection::addressSize = 256;
 
 Connection::Connection() {
     ListenSocket = INVALID_SOCKET;
     ClientSocket = INVALID_SOCKET;
     ptr = nullptr;
     result = nullptr;
-    addressSize = 256;
+    //addressSize = 256;
 }
 
 bool Connection::initialiseWinsock() {
@@ -63,7 +64,7 @@ bool Connection::bindSocket()  {
         return false;
     }
     std::cout << "bind: OK...\n";
-    iResult = WSAAddressToString(result->ai_addr, result->ai_addrlen, nullptr, this->address,&this->addressSize);//TODO: REMOVE
+    iResult = WSAAddressToString(result->ai_addr, result->ai_addrlen, nullptr, this->address,&addressSize);
     if (iResult != 0) {
         std::cout << "addresstostring failed: " << WSAGetLastError() << '\n';
         return false;
@@ -93,6 +94,7 @@ bool Connection::acceptConnection() { //TODO: accept multiple connections using 
         WSACleanup();
         return false;
     }
+    closesocket(ListenSocket);
     return true;
 }
 

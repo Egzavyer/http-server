@@ -6,7 +6,7 @@
 class Server {
 public:
     static bool receiveData(const SOCKET* ClientSocket);
-
+    static void shutdownServer(const SOCKET* ClientSocket);
 };
 
 
