@@ -56,7 +56,6 @@ int main() {
     std::cout << "Shutting Down Server...\n";
     Server::shutdownServer(connection.getClientSocket());
 
-    WSACleanup();
     std::cout << "Server Shutdown: OK...\n";
     return 0;
 }

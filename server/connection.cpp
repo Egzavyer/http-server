@@ -8,7 +8,6 @@ Connection::Connection() {
     ClientSocket = INVALID_SOCKET;
     ptr = nullptr;
     result = nullptr;
-    //addressSize = 256;
 }
 
 bool Connection::initialiseWinsock() {
