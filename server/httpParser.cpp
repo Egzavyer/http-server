@@ -38,7 +38,9 @@ void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest request) 
             case HTTPRequest::ParseState::BODY: {
                 if (request.getHeaders().contains("Content-Length"))
                     request.setBody(rawRequest.substr(0,std::stoi(request.getHeaders()["Content-Length"])));
-                
+                //TODO: check if there is remaining, if yes error
+                //TODO: handle different Transfer-Encoding (chunked)
+
                 request.setState(HTTPRequest::ParseState::DONE);
                 break;
             }
@@ -96,10 +98,6 @@ std::pair<std::string, std::string> HTTPParser::parseHeader(std::string &header)
     currentHeader.first = headerName;
     currentHeader.second = header;
     return currentHeader;
-}
-
-std::string HTTPParser::extractBody(std::string request) {
-    return std::string();
 }
 
 void HTTPParser::printHeaders(std::unordered_map<std::string, std::string> headers) {
