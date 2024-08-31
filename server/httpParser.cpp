@@ -36,13 +36,10 @@ void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest request) 
                 break;
             }
             case HTTPRequest::ParseState::BODY: {
-                if (request.getHeaders().contains("Content-Length")){
-                    std::cerr << "BODY\n";
-                    request.setState(HTTPRequest::ParseState::DONE);
-                } else {
-                    request.setState(HTTPRequest::ParseState::DONE);
-                }
-
+                if (request.getHeaders().contains("Content-Length"))
+                    request.setBody(rawRequest.substr(0,std::stoi(request.getHeaders()["Content-Length"])));
+                
+                request.setState(HTTPRequest::ParseState::DONE);
                 break;
             }
             case HTTPRequest::ParseState::DONE: {
@@ -51,7 +48,7 @@ void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest request) 
             }
         }
     }
-    std::cout << "Parsing Complete...\n";
+    std::cout << "\nParsing Complete...\n";
 }
 
 std::string HTTPParser::extractRequestLine(std::string& request) {
