@@ -33,6 +33,10 @@ void HTTPRequest::setVersion(std::basic_string<char> requestVersion) {
     this->version = requestVersion;
 }
 
+std::unordered_map<std::string, std::string> HTTPRequest::getHeaders() {
+    return this->headers;
+}
+
 void HTTPRequest::setHeader(std::pair<std::string, std::string> currentHeader) {
     this->headers[currentHeader.first] = currentHeader.second;
 }

@@ -22,6 +22,7 @@ public:
     void setURI(std::basic_string<char> requestURI);
     std::string getVersion();
     void setVersion(std::basic_string<char> requestVersion);
+    std::unordered_map<std::string, std::string> getHeaders();
     void setHeader(std::pair<std::string, std::string> currentHeader);
     std::string getBody();
     void setBody(std::basic_string<char> requestBody);

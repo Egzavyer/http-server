@@ -13,9 +13,12 @@ private:
     static std::string extractRequestLine(std::string& request);
     static std::string extractMethod(std::string &requestLine);
     static std::string extractURI(std::string &requestLine);
-    static std::string extractVersion(std::string requestLine);
-    static std::pair<std::string,std::string> extractHeader(std::string request);
+    static std::string extractVersion(std::string &requestLine);
+    static std::string extractHeader(std::string &request);
+    static std::pair<std::string, std::string> parseHeader(std::string &header);
     static std::string extractBody(std::string request);
+
+    static void printHeaders(std::unordered_map<std::string,std::string> headers);
 
 };
 
