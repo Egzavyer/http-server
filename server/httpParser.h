@@ -7,7 +7,7 @@
 class HTTPParser {
 public:
 
-    static void parseHTTPRequest(std::string &rawRequest, HTTPRequest request);
+    static void parseHTTPRequest(std::string &rawRequest, HTTPRequest &request);
 
 private:
     static std::string extractRequestLine(std::string& request);
@@ -16,7 +16,6 @@ private:
     static std::string extractVersion(std::string &requestLine);
     static std::string extractHeader(std::string &request);
     static std::pair<std::string, std::string> parseHeader(std::string &header);
-    static std::string extractBody(std::string request);
 
     static void printHeaders(std::unordered_map<std::string,std::string> headers);
 

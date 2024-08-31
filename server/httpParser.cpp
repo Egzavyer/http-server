@@ -1,10 +1,11 @@
 #include "httpParser.h"
 
-void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest request) {
+void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest &request) {
 
     std::string requestLine = HTTPParser::extractRequestLine(rawRequest);
     std::string currentHeader;
 
+    //TODO: handle incomplete or bigger requests
     while (request.getState() != HTTPRequest::ParseState::DONE) {
         switch (request.getState()) {
             case HTTPRequest::ParseState::METHOD: {
