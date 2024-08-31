@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 23)
 add_executable(ServerExecutable
         server/server.cpp
         common/common.cpp
+        server/connection.cpp
+        server/httpRequest.cpp
+        server/httpRequest.h
+        server/httpParser.cpp
+        server/httpParser.h
 )
 
 add_executable(ClientExecutable

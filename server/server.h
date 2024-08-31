@@ -1,13 +1,13 @@
 #ifndef HTTP_SERVER_SERVER_H
 #define HTTP_SERVER_SERVER_H
 
-#include <unordered_map>
-#include <vector>
-#include <fstream>
-#include <sstream>
+#include "connection.h"
+#include "httpParser.h"
 
 class Server {
-
+public:
+    static bool receiveData(const SOCKET* ClientSocket);
+    static void shutdownServer(const SOCKET* ClientSocket);
 };
 
 
