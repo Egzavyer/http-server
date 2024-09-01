@@ -11,7 +11,10 @@
 }
 
 std::string HTTPHandler::handleGET(HTTPRequest &request) {
+    HTTPResponse httpResponse;
+    std::string statusCode, statusText;
     //TODO: read from HTML file
+    bool readFromFile = true;
     std::string file = "<!DOCTYPE html>\n"
                        "<html lang=\"en\">\n"
                        "<head>\n"
@@ -23,11 +26,19 @@ std::string HTTPHandler::handleGET(HTTPRequest &request) {
                        "<p>On my HTTP server</p>\n"
                        "</body>\n"
                        "</html>";
-    std::string statusCode = "200";
-    std::string statusText = "Success";
-    std::string response = request.getVersion() + ' ' + statusCode + ' ' + statusText + "\r\n" + "Content-Type: " + request.getHeaders()["Content-Type"] + "\r\n" + "Content-Length: " +
-            std::to_string(file.length()) + "\r\n\r\n" + file;
-    return response;
+    if (readFromFile) {
+        statusCode = "200";
+        statusText = "OK";
+        //TODO: set headers
+        httpResponse.setBody(file);
+    } else {
+        statusCode = "404";
+        statusText = "Not Found";
+    }
+    httpResponse.setVersion(request.getVersion());
+    httpResponse.setStatusCode(statusCode);
+    httpResponse.setStatusText(statusText);
+    return httpResponse.getResponse();
 }
 
 std::string HTTPHandler::handlePOST(HTTPRequest &request) {

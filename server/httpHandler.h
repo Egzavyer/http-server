@@ -4,6 +4,7 @@
 
 #include "../common/common.h"
 #include "httpRequest.h"
+#include "httpResponse.h"
 
 class HTTPHandler {
 public:
