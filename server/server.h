@@ -3,6 +3,7 @@
 
 #include "connection.h"
 #include "httpParser.h"
+#include "httpHandler.h"
 
 class Server {
 public:

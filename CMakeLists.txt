@@ -11,6 +11,8 @@ add_executable(ServerExecutable
         server/httpRequest.h
         server/httpParser.cpp
         server/httpParser.h
+        server/httpHandler.cpp
+        server/httpHandler.h
 )
 
 add_executable(ClientExecutable

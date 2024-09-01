@@ -15,7 +15,9 @@ bool Server::receiveData(const SOCKET* ClientSocket) {
             requestData.append(recvbuf,iResult);
             HTTPParser::parseHTTPRequest(requestData, request);
 
-            iSendResult = send(*ClientSocket, recvbuf, iResult, 0);
+            std::string sendbuf = HTTPHandler::response(request);
+
+            iSendResult = send(*ClientSocket, sendbuf.c_str(), (int)sendbuf.length(), 0);
             if (iSendResult == SOCKET_ERROR) {
                 std::cerr << "send FAILED: " << WSAGetLastError() << '\n';
                 closesocket(*ClientSocket);
