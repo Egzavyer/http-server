@@ -33,7 +33,7 @@ bool Server::receiveData(const SOCKET* ClientSocket) {
             WSACleanup();
             return false;
         }
-    } while (iResult > 0);
+    } while (iResult > 0); //TODO: make connection able to close
     return true;
 }
 
@@ -56,8 +56,10 @@ int main() {
         std::cerr << "Connection FAILED\n";
     }
     
-    if (!Server::receiveData(connection.getClientSocket())){
-        std::cerr << "receiveData FAILED\n";
+    while (true) {
+        if (!Server::receiveData(connection.getClientSocket())){
+            std::cerr << "receiveData FAILED\n";
+        }
     }
 
     std::cout << "Shutting Down Server...\n";

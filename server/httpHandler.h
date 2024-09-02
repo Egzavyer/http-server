@@ -5,6 +5,9 @@
 #include "../common/common.h"
 #include "httpRequest.h"
 #include "httpResponse.h"
+#include <fstream>
+#include <string>
+#include <sstream>
 
 class HTTPHandler {
 public:
@@ -12,6 +15,7 @@ public:
 private:
     static std::string handleGET(HTTPRequest &request);
     static std::string handlePOST(HTTPRequest &request);
+    static std::string readFromHTML(const std::string& filename);
 };
 
 
