@@ -72,7 +72,7 @@ std::string HTTPParser::extractURI(std::string &requestLine) {
     size_t uriEnd = requestLine.find(' ');
     std::string uri = requestLine.substr(0,uriEnd);
     requestLine = requestLine.substr(uriEnd+1);
-    if (uri == "/" || uri == "/favicon.ico")
+    if (uri == "/")
         return "/index.html";
 
     return uri;

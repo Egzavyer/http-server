@@ -4,12 +4,13 @@
 
 bool Server::receiveData(const SOCKET* ClientSocket) {
     char recvbuf[DEFAULT_BUFLEN];
-    HTTPRequest request;
+    //HTTPRequest request;
     std::string requestData;
     int iResult, iSendResult;
     do {
         iResult = recv(*ClientSocket, recvbuf, DEFAULT_BUFLEN,0);
         if (iResult > 0) {
+            HTTPRequest request;
             std::cout << "Bytes received: " << iResult << '\n';
 
             requestData.append(recvbuf,iResult);
