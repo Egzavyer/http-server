@@ -19,7 +19,7 @@ std::string HTTPResponse::getStatusLine() {
 }
 
 void HTTPResponse::setStatusLine() {
-    this->statusLine = this->version + ' ' + this->statusCode + ' ' + this->statusText + "\r\n";
+    this->statusLine = this->version + ' ' + this->statusCode + ' ' + this->statusText;
 }
 
 std::string HTTPResponse::getVersion() {
@@ -65,7 +65,7 @@ void HTTPResponse::setBody(std::string requestBody) {
 std::string HTTPResponse::headersToString(const std::unordered_map<std::string, std::string> &responseHeaders) {
     std::string headerString;
     for (const auto &header : responseHeaders) {
-        headerString += header.first + ": " + header.second + "\r\n";
+        headerString += "\r\n" + header.first + ": " + header.second;
     }
     return headerString + "\r\n\r\n";
 }

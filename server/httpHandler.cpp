@@ -14,8 +14,20 @@ std::string HTTPHandler::handleGET(HTTPRequest &request) {
     HTTPResponse httpResponse;
     std::string statusCode, statusText;
     std::pair<std::string,std::string> header;
+
+    //std::string file = "<!DOCTYPE html>\n"
+                       "<html lang=\"en\">\n"
+                       "<head>\n"
+                       "    <meta charset=\"UTF-8\">\n"
+                       "    <title>Index</title>\n"
+                       "</head>\n"
+                       "<body>\n"
+                       "<h1>This is loaded from a file</h1>\n"
+                       "<p>On my HTTP server</p>\n"
+                       "</body>\n"
+                       "</html>";
+
     //TODO: read from HTML file
-    bool readFromFile = true;
     std::string file = readFromHTML(request.getURI());
     if (!file.empty()) {
         statusCode = "200";
@@ -34,6 +46,17 @@ std::string HTTPHandler::handleGET(HTTPRequest &request) {
         //TODO: set headers
         httpResponse.setBody(readFromHTML("/404NotFound.html"));
     }
+
+    /*statusCode = "200";
+    statusText = "OK";
+    header.first = "Content-Length";
+    header.second = std::to_string(file.length());
+    httpResponse.setHeader(header);
+    header.first = "Content-Type";
+    header.second = "text/html";
+    httpResponse.setHeader(header);
+    httpResponse.setBody(file);*/
+
     httpResponse.setVersion(request.getVersion());
     httpResponse.setStatusCode(statusCode);
     httpResponse.setStatusText(statusText);

@@ -8,7 +8,7 @@ bool Server::receiveData(const SOCKET* ClientSocket) {
     std::string requestData;
     int iResult, iSendResult;
     do {
-        iResult = recv(*ClientSocket, recvbuf, sizeof(recvbuf),0);
+        iResult = recv(*ClientSocket, recvbuf, DEFAULT_BUFLEN,0);
         if (iResult > 0) {
             std::cout << "Bytes received: " << iResult << '\n';
 
@@ -33,7 +33,7 @@ bool Server::receiveData(const SOCKET* ClientSocket) {
             WSACleanup();
             return false;
         }
-    } while (iResult > 0); //TODO: make connection able to close
+    } while (iResult > 0);
     return true;
 }
 
@@ -55,11 +55,9 @@ int main() {
     } else {
         std::cerr << "Connection FAILED\n";
     }
-    
-    while (true) {
-        if (!Server::receiveData(connection.getClientSocket())){
-            std::cerr << "receiveData FAILED\n";
-        }
+
+    if (!Server::receiveData(connection.getClientSocket())){
+        std::cerr << "receiveData FAILED\n";
     }
 
     std::cout << "Shutting Down Server...\n";
