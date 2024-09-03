@@ -24,13 +24,12 @@ std::string HTTPHandler::handleGET(HTTPRequest &request) {
         header.second = std::to_string(file.length());
         httpResponse.setHeader(header);
         header.first = "Content-Type";
-        header.second = "text/html";
+        header.second = httpResponse.getBodyMIMEType(request.getURI());
         httpResponse.setHeader(header);
         httpResponse.setBody(file);
     } else {
         statusCode = "404";
         statusText = "Not Found";
-
         httpResponse.setBody(readFromHTML("/404NotFound.html"));
     }
 
@@ -49,7 +48,7 @@ std::string HTTPHandler::readFromHTML(const std::string& filename) { //TODO: put
     path = "../public" + filename;
     std::ifstream file(path);
     if (!file){
-        std::cerr << "readFromHTML FAILED: Unable to Open File\n";
+        std::cerr << "readFromHTML FAILED: Unable to Open File " << path << '\n';
         return "";
     }
     std::stringstream buffer;

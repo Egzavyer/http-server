@@ -34,6 +34,8 @@ bool Server::receiveData(const SOCKET* ClientSocket) {
             WSACleanup();
             return false;
         }
+
+
     } while (iResult > 0);
     return true;
 }

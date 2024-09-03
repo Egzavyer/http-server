@@ -10,52 +10,24 @@ HTTPResponse::HTTPResponse() {
 }
 
 std::string HTTPResponse::getResponse() {
-    this->setStatusLine();
-    return this->statusLine + this->headersToString(this->headers) + this->body;
-}
-
-std::string HTTPResponse::getStatusLine() {
-    return this->statusLine;
-}
-
-void HTTPResponse::setStatusLine() {
     this->statusLine = this->version + ' ' + this->statusCode + ' ' + this->statusText;
-}
-
-std::string HTTPResponse::getVersion() {
-    return this->version;
+    return this->statusLine + this->headersToString(this->headers) + this->body;
 }
 
 void HTTPResponse::setVersion(std::string version) {
     this->version = version;
 }
 
-std::string HTTPResponse::getStatusCode() {
-    return this->statusCode;
-}
-
 void HTTPResponse::setStatusCode(std::string code) {
     this->statusCode = code;
-}
-
-std::string HTTPResponse::getStatusText() {
-    return this->statusText;
 }
 
 void HTTPResponse::setStatusText(std::string text) {
     this->statusText = text;
 }
 
-std::unordered_map<std::string, std::string> HTTPResponse::getHeaders() {
-    return this->headers;
-}
-
 void HTTPResponse::setHeader(std::pair<std::string, std::string> currentHeader) {
     this->headers[currentHeader.first] = currentHeader.second;
-}
-
-std::string HTTPResponse::getBody() {
-    return this->body;
 }
 
 void HTTPResponse::setBody(std::string requestBody) {
@@ -68,4 +40,14 @@ std::string HTTPResponse::headersToString(const std::unordered_map<std::string, 
         headerString += "\r\n" + header.first + ": " + header.second;
     }
     return headerString + "\r\n\r\n";
+}
+
+std::string HTTPResponse::getBodyMIMEType(const std::string &requestURI) {
+    size_t fileExtensionStart = requestURI.find('.');
+    std::string fileExtension = requestURI.substr(fileExtensionStart+1);
+    if (fileExtension == "html") {
+        return "text/html";
+    } else {
+        return "image/webp";
+    }
 }
