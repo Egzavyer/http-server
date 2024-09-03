@@ -50,7 +50,7 @@ http-server/
 ├── client/          # Client-side code
 ├── common/          # Common utilities
 ├── server/          # Server-side code
-├── wwwroot/         # Static HTML files
+├── public/         # Static HTML files
 ├── CMakeLists.txt   # CMake configuration
 └── README.md        # Project description
 ```
