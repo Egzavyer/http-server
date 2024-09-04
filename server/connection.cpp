@@ -25,7 +25,7 @@ bool Connection::initialiseWinsock() {
 bool Connection::createSocket() {
     result = nullptr;
     ptr = nullptr;
-    ListenSocket = INVALID_SOCKET; //TODO: REFACTOR
+    ListenSocket = INVALID_SOCKET;
 
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family = AF_INET;

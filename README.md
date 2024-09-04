@@ -55,6 +55,18 @@ http-server/
 └── README.md        # Project description
 ```
 
-## License
+## TODO
+- Put methods that can be made static in a util.cpp file
+- Put frequently reused headers in the common.h file or delete the common class
 
-This project is licensed under the MIT License.
+- Handle multiple connections using threads (connection.cpp)
+- Make the parsing of POST request body more reusable and efficient (httpHandler.cpp)
+- Handle response Content-Type header more efficiently (httpHandler.cpp)
+- Handle bigger or incomplete requests (httpParser.cpp)
+- Handle chunked Transfer-Encoding (httpParser.cpp)
+- Handle GET request for favicon.ico (httpParser.cpp)
+
+- Refactor for best practices
+- Optimize
+- Comment code
+- Figure out what license project falls under and add it
