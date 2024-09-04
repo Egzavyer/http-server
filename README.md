@@ -73,4 +73,5 @@ http-server/
 - Optimize
 - Comment code
 - Figure out what license project falls under and add it
+- Make project on different machines
 - Testing
