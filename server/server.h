@@ -2,8 +2,10 @@
 #define HTTP_SERVER_SERVER_H
 
 #include "connection.h"
-#include "httpParser.h"
 #include "httpHandler.h"
+#include "httpParser.h"
+#include "../common/common.h"
+
 
 class Server {
 public:
