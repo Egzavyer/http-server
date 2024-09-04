@@ -11,7 +11,7 @@ public:
     void setVersion(std::string version);
     void setStatusCode(std::string code);
     void setStatusText(std::string text);
-    void setHeader(std::pair<std::string, std::string> currentHeader);
+    void setHeader(std::string name, std::string value);
     void setBody(std::string requestBody);
     std::string getBodyMIMEType(const std::string &requestURI);
 

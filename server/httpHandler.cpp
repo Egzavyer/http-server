@@ -1,9 +1,9 @@
 #include "httpHandler.h"
 
  std::string HTTPHandler::response(HTTPRequest &request) {
-    if (request.getMethod() == "GET") {
+    if (request.getMethod().contains("GET")) {
         return handleGET(request);
-    } else if (request.getMethod() == "POST") {
+    } else if (request.getMethod().contains("POST")) {
         return handlePOST(request);
     } else {
         std::cerr << "ERROR: Unhandled Method\n";
@@ -20,12 +20,8 @@ std::string HTTPHandler::handleGET(HTTPRequest &request) {
         statusCode = "200";
         statusText = "OK";
         //TODO: handle MIME and headers more efficiently
-        header.first = "Content-Length";
-        header.second = std::to_string(file.length());
-        httpResponse.setHeader(header);
-        header.first = "Content-Type";
-        header.second = httpResponse.getBodyMIMEType(request.getURI());
-        httpResponse.setHeader(header);
+        httpResponse.setHeader("Content-Length", std::to_string(file.length()));
+        httpResponse.setHeader("Content-Type", httpResponse.getBodyMIMEType(request.getURI()));
         httpResponse.setBody(file);
     } else {
         statusCode = "404";
@@ -44,20 +40,20 @@ std::string HTTPHandler::handlePOST(HTTPRequest &request) {
     std::string statusCode, statusText;
     std::pair<std::string,std::string> header;
     std::string fileLocation = "../public" + request.getURI() + "/users.txt";
-    std::string file = readFromHTML(request.getURI()+".html");
 
+    std::string file = readFromHTML("/index.html");
     if (writeToFile(fileLocation, request)){
         statusCode = "201";
         statusText = "Created";
-        //TODO: appropriate body for response (JSON?)
+        httpResponse.setBody(file);
     } else {
         statusCode = "500";
         statusText = "Internal Server Error";
     }
 
-    header.first = "Location";
-    header.second = fileLocation;
-    httpResponse.setHeader(header);
+    httpResponse.setHeader("Location", fileLocation);
+    httpResponse.setHeader("Content-Type", "text/html");
+    httpResponse.setHeader("Content-Length", std::to_string(file.length()));
 
     httpResponse.setVersion(request.getVersion());
     httpResponse.setStatusCode(statusCode);
@@ -90,7 +86,7 @@ bool HTTPHandler::writeToFile(const std::string &filename, HTTPRequest &request)
     }
 }
 
-std::string HTTPHandler::parseForm(const std::string &formData) {
+std::string HTTPHandler::parseForm(const std::string &formData) { //TODO: make more reusable
     size_t nameEnd = formData.find('&');
     size_t userEnd = formData.find('%',nameEnd+1);
     std::string parsedForm = "==========================================\nName: " +
