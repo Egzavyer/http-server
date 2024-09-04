@@ -57,14 +57,14 @@ http-server/
 ```
 
 ## TODO
-<<<<<<< Updated upstream
 - Put methods that can be made static in a util.cpp file
 - Put frequently reused headers in the common.h file or delete the common class
-=======
+
+
 - ~~Put methods that can be made static in a util.cpp file~~
 - ~~Put frequently reused headers in the common.h file or delete the common class~~
 
->>>>>>> Stashed changes
+
 - Handle multiple connections using threads (connection.cpp)
 - Make the parsing of POST request body more reusable and efficient (util.cpp)
 - Handle response Content-Type header more efficiently (httpHandler.cpp)
