@@ -26,8 +26,8 @@ void HTTPResponse::setStatusText(std::string text) {
     this->statusText = text;
 }
 
-void HTTPResponse::setHeader(std::pair<std::string, std::string> currentHeader) {
-    this->headers[currentHeader.first] = currentHeader.second;
+void HTTPResponse::setHeader(std::string name, std::string value) {
+    this->headers[name] = value;
 }
 
 void HTTPResponse::setBody(std::string requestBody) {
