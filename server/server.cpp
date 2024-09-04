@@ -4,7 +4,6 @@
 
 bool Server::receiveData(const SOCKET* ClientSocket) {
     char recvbuf[DEFAULT_BUFLEN];
-    //HTTPRequest request;
     std::string requestData;
     int iResult, iSendResult;
     do {
@@ -34,6 +33,8 @@ bool Server::receiveData(const SOCKET* ClientSocket) {
             WSACleanup();
             return false;
         }
+
+
     } while (iResult > 0);
     return true;
 }

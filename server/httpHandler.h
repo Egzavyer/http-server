@@ -16,6 +16,8 @@ private:
     static std::string handleGET(HTTPRequest &request);
     static std::string handlePOST(HTTPRequest &request);
     static std::string readFromHTML(const std::string& filename);
+    static bool writeToFile(const std::string& filename, HTTPRequest &request);
+    static std::string parseForm(const std::string &formData);
 };
 
 

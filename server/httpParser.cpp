@@ -39,6 +39,7 @@ void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest &request)
             case HTTPRequest::ParseState::BODY: {
                 if (request.getHeaders().contains("Content-Length"))
                     request.setBody(rawRequest.substr(0,std::stoi(request.getHeaders()["Content-Length"])));
+                std::cout << request.getBody() << '\n';
                 //TODO: check if there is remaining, if yes error
                 //TODO: handle different Transfer-Encoding (chunked)
 
@@ -72,7 +73,7 @@ std::string HTTPParser::extractURI(std::string &requestLine) {
     size_t uriEnd = requestLine.find(' ');
     std::string uri = requestLine.substr(0,uriEnd);
     requestLine = requestLine.substr(uriEnd+1);
-    if (uri == "/")
+    if (uri == "/" || uri == "/favicon.ico") //TODO: handle favicon.ico
         return "/index.html";
 
     return uri;
