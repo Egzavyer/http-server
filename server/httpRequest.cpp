@@ -13,7 +13,7 @@ std::string HTTPRequest::getMethod() {
     return this->method;
 }
 
-void HTTPRequest::setMethod(std::basic_string<char> requestMethod) {
+void HTTPRequest::setMethod(std::string requestMethod) {
     this->method = requestMethod;
 }
 
@@ -21,7 +21,7 @@ std::string HTTPRequest::getURI() {
     return this->uri;
 }
 
-void HTTPRequest::setURI(std::basic_string<char> requestURI) {
+void HTTPRequest::setURI(std::string requestURI) {
     this->uri = requestURI;
 }
 
@@ -29,7 +29,7 @@ std::string HTTPRequest::getVersion() {
     return this->version;
 }
 
-void HTTPRequest::setVersion(std::basic_string<char> requestVersion) {
+void HTTPRequest::setVersion(std::string requestVersion) {
     this->version = requestVersion;
 }
 
@@ -45,7 +45,7 @@ std::string HTTPRequest::getBody() {
     return this->body;
 }
 
-void HTTPRequest::setBody(std::basic_string<char> requestBody) {
+void HTTPRequest::setBody(std::string requestBody) {
     this->body = requestBody;
 }
 

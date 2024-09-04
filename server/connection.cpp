@@ -104,10 +104,6 @@ bool Connection::setupConnection() {
     return false;
 }
 
-SOCKET Connection::getListenSocket() const {
-    return this->ListenSocket;
-}
-
 const SOCKET* Connection::getClientSocket() const {
     const SOCKET *socketPointer = &this->ClientSocket;
     return socketPointer;

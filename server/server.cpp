@@ -1,5 +1,4 @@
 #include "server.h"
-#include "../common/common.h"
 #pragma comment(lib, "ws2_32.lib")
 
 bool Server::receiveData(const SOCKET* ClientSocket) {

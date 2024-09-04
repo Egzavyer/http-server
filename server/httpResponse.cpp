@@ -11,7 +11,7 @@ HTTPResponse::HTTPResponse() {
 
 std::string HTTPResponse::getResponse() {
     this->statusLine = this->version + ' ' + this->statusCode + ' ' + this->statusText;
-    return this->statusLine + this->headersToString(this->headers) + this->body;
+    return this->statusLine + Util::headersToString(this->headers) + this->body;
 }
 
 void HTTPResponse::setVersion(std::string version) {
@@ -32,22 +32,4 @@ void HTTPResponse::setHeader(std::string name, std::string value) {
 
 void HTTPResponse::setBody(std::string requestBody) {
     this->body = requestBody;
-}
-
-std::string HTTPResponse::headersToString(const std::unordered_map<std::string, std::string> &responseHeaders) {
-    std::string headerString;
-    for (const auto &header : responseHeaders) {
-        headerString += "\r\n" + header.first + ": " + header.second;
-    }
-    return headerString + "\r\n\r\n";
-}
-
-std::string HTTPResponse::getBodyMIMEType(const std::string &requestURI) {
-    size_t fileExtensionStart = requestURI.find('.');
-    std::string fileExtension = requestURI.substr(fileExtensionStart+1);
-    if (fileExtension == "html") {
-        return "text/html";
-    } else {
-        return "image/webp";
-    }
 }

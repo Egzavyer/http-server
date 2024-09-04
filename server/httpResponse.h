@@ -2,6 +2,7 @@
 #define HTTP_SERVER_HTTPRESPONSE_H
 
 #include "../common/common.h"
+#include "../common/util.h"
 #include <unordered_map>
 
 class HTTPResponse {
@@ -13,7 +14,6 @@ public:
     void setStatusText(std::string text);
     void setHeader(std::string name, std::string value);
     void setBody(std::string requestBody);
-    std::string getBodyMIMEType(const std::string &requestURI);
 
 private:
     std::string statusLine;
@@ -22,9 +22,6 @@ private:
     std::string statusText;
     std::unordered_map<std::string,std::string> headers;
     std::string body;
-
-    std::string headersToString(const std::unordered_map<std::string,std::string>& responseHeaders);
-
 };
 
 

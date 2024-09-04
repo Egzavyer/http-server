@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_executable(ServerExecutable
         server/server.cpp
-        common/common.cpp
         server/connection.cpp
         server/httpRequest.cpp
         server/httpRequest.h
@@ -15,11 +14,12 @@ add_executable(ServerExecutable
         server/httpHandler.h
         server/httpResponse.cpp
         server/httpResponse.h
+        common/util.cpp
+        common/util.h
 )
 
 add_executable(ClientExecutable
         client/client.cpp
-        common/common.cpp
 )
 
 target_link_libraries(ServerExecutable PRIVATE ws2_32)

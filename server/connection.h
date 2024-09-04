@@ -8,7 +8,6 @@ class Connection {
 public:
     Connection();
     bool setupConnection();
-    SOCKET getListenSocket() const;
     const SOCKET* getClientSocket() const;
     char address[256]{};
 
