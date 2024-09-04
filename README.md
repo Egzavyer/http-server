@@ -57,10 +57,6 @@ http-server/
 ```
 
 ## TODO
-- Put methods that can be made static in a util.cpp file
-- Put frequently reused headers in the common.h file or delete the common class
-
-
 - ~~Put methods that can be made static in a util.cpp file~~
 - ~~Put frequently reused headers in the common.h file or delete the common class~~
 
@@ -71,6 +67,8 @@ http-server/
 - Handle bigger or incomplete requests (httpParser.cpp)
 - Handle chunked Transfer-Encoding (httpParser.cpp)
 - Handle GET request for favicon.ico (httpParser.cpp)
+
+
 - Refactor for best practices
 - Optimize
 - Comment code
