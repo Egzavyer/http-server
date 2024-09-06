@@ -1,22 +1,26 @@
 #include "server.h"
+#include "connection.h"
+#include "httpHandler.h"
+#include "httpParser.h"
+
 #pragma comment(lib, "ws2_32.lib")
 
-bool Server::receiveData(const SOCKET* ClientSocket) {
+bool Server::receiveData(const SOCKET *ClientSocket) {
     char recvbuf[DEFAULT_BUFLEN];
     std::string requestData;
     int iResult, iSendResult;
     do {
-        iResult = recv(*ClientSocket, recvbuf, DEFAULT_BUFLEN,0);
+        iResult = recv(*ClientSocket, recvbuf, DEFAULT_BUFLEN, 0);
         if (iResult > 0) {
             HTTPRequest request;
             std::cout << "Bytes received: " << iResult << '\n';
 
-            requestData.append(recvbuf,iResult);
+            requestData.append(recvbuf, iResult);
             HTTPParser::parseHTTPRequest(requestData, request);
 
             std::string sendbuf = HTTPHandler::response(request);
 
-            iSendResult = send(*ClientSocket, sendbuf.c_str(), (int)sendbuf.length(), 0);
+            iSendResult = send(*ClientSocket, sendbuf.c_str(), (int) sendbuf.length(), 0);
             if (iSendResult == SOCKET_ERROR) {
                 std::cerr << "send FAILED: " << WSAGetLastError() << '\n';
                 closesocket(*ClientSocket);
@@ -32,8 +36,6 @@ bool Server::receiveData(const SOCKET* ClientSocket) {
             WSACleanup();
             return false;
         }
-
-
     } while (iResult > 0);
     return true;
 }
@@ -57,7 +59,7 @@ int main() {
         std::cerr << "Connection FAILED\n";
     }
 
-    if (!Server::receiveData(connection.getClientSocket())){
+    if (!Server::receiveData(connection.getClientSocket())) {
         std::cerr << "receiveData FAILED\n";
     }
 

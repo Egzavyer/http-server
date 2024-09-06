@@ -1,4 +1,6 @@
 #include "util.h"
+#include "common.h"
+#include <sstream>
 
 std::string Util::readFromHTML(const std::string& filename) {
     std::string path;
@@ -25,13 +27,25 @@ bool Util::writeToFile(const std::string &filename, HTTPRequest &request) {
     }
 }
 
-std::string Util::parseForm(const std::string &formData) { //TODO: make more reusable
-    size_t nameEnd = formData.find('&');
-    size_t userEnd = formData.find('%',nameEnd+1);
-    std::string parsedForm = "==========================================\nName: " +
-                             formData.substr(5,nameEnd-5) +
-                             "\nEmail: " + formData.substr(nameEnd+7,userEnd-(7+nameEnd)) + '@' + formData.substr(userEnd+3);
-    return parsedForm;
+std::string Util::parseForm(std::string formData) {
+
+    while (formData.contains('+') || formData.contains('&') || formData.contains("%40")) {
+        size_t spacePos = formData.find('+');
+        size_t separationPos = formData.find('&');
+        size_t atPos = formData.find("%40");
+
+        if (spacePos != std::string::npos)
+            formData[spacePos] = ' ';
+        if (separationPos != std::string::npos)
+            formData[separationPos] = '\n';
+        if (atPos != std::string::npos) {
+            formData[atPos] = '@';
+            std::string domain = formData.substr(atPos+3);
+            formData = formData.substr(0,atPos+1);
+            formData += domain;
+        }
+    }
+    return formData;
 }
 
 std::string Util::headersToString(const std::unordered_map<std::string, std::string> &responseHeaders) {

@@ -1,9 +1,11 @@
 #include "httpHandler.h"
+#include "../common/common.h"
+#include "httpResponse.h"
 
- std::string HTTPHandler::response(HTTPRequest &request) {
-    if (request.getMethod().contains("GET")) {
+std::string HTTPHandler::response(HTTPRequest &request) {
+    if (request.getMethod() == "GET") {
         return handleGET(request);
-    } else if (request.getMethod().contains("POST")) {
+    } else if (request.getMethod() == "POST") {
         return handlePOST(request);
     } else {
         std::cerr << "ERROR: Unhandled Method\n";
@@ -14,7 +16,9 @@
 std::string HTTPHandler::handleGET(HTTPRequest &request) {
     HTTPResponse httpResponse;
     std::string statusCode, statusText;
-    std::pair<std::string,std::string> header;
+    std::pair<std::string, std::string> header;
+
+
 
     std::string file = Util::readFromHTML(request.getURI());
     if (!file.empty()) {
@@ -39,11 +43,11 @@ std::string HTTPHandler::handleGET(HTTPRequest &request) {
 std::string HTTPHandler::handlePOST(HTTPRequest &request) {
     HTTPResponse httpResponse;
     std::string statusCode, statusText;
-    std::pair<std::string,std::string> header;
+    std::pair<std::string, std::string> header;
     std::string fileLocation = "../public" + request.getURI() + "/users.txt";
 
     std::string file = Util::readFromHTML("/index.html");
-    if (Util::writeToFile(fileLocation, request)){
+    if (Util::writeToFile(fileLocation, request)) {
         statusCode = "201";
         statusText = "Created";
         httpResponse.setBody(file);

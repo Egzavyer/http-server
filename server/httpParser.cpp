@@ -1,7 +1,6 @@
 #include "httpParser.h"
 
 void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest &request) {
-
     std::string requestLine = HTTPParser::extractRequestLine(rawRequest);
     std::string currentHeader;
 
@@ -20,7 +19,7 @@ void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest &request)
                 request.setState(HTTPRequest::ParseState::VERSION);
                 break;
             }
-            case HTTPRequest::ParseState::VERSION : {
+            case HTTPRequest::ParseState::VERSION: {
                 request.setVersion(HTTPParser::extractVersion(requestLine));
                 std::cout << request.getVersion() << '\n';
                 request.setState(HTTPRequest::ParseState::HEADERS);
@@ -28,19 +27,24 @@ void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest &request)
             }
             case HTTPRequest::ParseState::HEADERS: {
                 currentHeader = HTTPParser::extractHeader(rawRequest);
-                 do {
+                do {
                     request.setHeader(HTTPParser::parseHeader(currentHeader));
-                     currentHeader = HTTPParser::extractHeader(rawRequest);
+                    currentHeader = HTTPParser::extractHeader(rawRequest);
                 } while (!currentHeader.empty());
                 HTTPParser::printHeaders(request.getHeaders());
                 request.setState(HTTPRequest::ParseState::BODY);
                 break;
             }
             case HTTPRequest::ParseState::BODY: {
-                if (request.getHeaders().contains("Content-Length"))
-                    request.setBody(rawRequest.substr(0,std::stoi(request.getHeaders()["Content-Length"])));
-                std::cout << request.getBody() << '\n';
-                //TODO: check if there is remaining, if yes error
+                if (request.getHeaders().contains("Content-Length")) {
+                    request.setBody(rawRequest.substr(0, std::stoi(request.getHeaders()["Content-Length"])));
+                    std::cout << request.getBody() << '\n';
+                    rawRequest = rawRequest.substr(std::stoi(request.getHeaders()["Content-Length"]));
+                    if (!rawRequest.empty()) {
+                        std::cerr << "Parsing Error(Body Remains): " << rawRequest << '\n';
+                        rawRequest.clear();
+                    }
+                }
                 //TODO: handle different Transfer-Encoding (chunked)
 
                 request.setState(HTTPRequest::ParseState::DONE);
@@ -55,24 +59,24 @@ void HTTPParser::parseHTTPRequest(std::string &rawRequest, HTTPRequest &request)
     std::cout << "\nParsing Complete...\n";
 }
 
-std::string HTTPParser::extractRequestLine(std::string& request) {
+std::string HTTPParser::extractRequestLine(std::string &request) {
     size_t requestLineEnd = request.find("\r\n");
-    std::string requestLine = request.substr(0,requestLineEnd);
-    request = request.substr(requestLineEnd+2);
+    std::string requestLine = request.substr(0, requestLineEnd);
+    request = request.substr(requestLineEnd + 2);
     return requestLine;
 }
 
 std::string HTTPParser::extractMethod(std::string &requestLine) {
     size_t methodEnd = requestLine.find(' ');
-    std::string method = requestLine.substr(0,methodEnd);
-    requestLine = requestLine.substr(methodEnd+1);
+    std::string method = requestLine.substr(0, methodEnd);
+    requestLine = requestLine.substr(methodEnd + 1);
     return method;
 }
 
 std::string HTTPParser::extractURI(std::string &requestLine) {
     size_t uriEnd = requestLine.find(' ');
-    std::string uri = requestLine.substr(0,uriEnd);
-    requestLine = requestLine.substr(uriEnd+1);
+    std::string uri = requestLine.substr(0, uriEnd);
+    requestLine = requestLine.substr(uriEnd + 1);
     if (uri == "/" || uri == "/favicon.ico") //TODO: handle favicon.ico
         return "/index.html";
 
@@ -81,24 +85,24 @@ std::string HTTPParser::extractURI(std::string &requestLine) {
 
 std::string HTTPParser::extractVersion(std::string &requestLine) {
     size_t versionEnd = requestLine.find("\r\n");
-    std::string version = requestLine.substr(0,versionEnd);
-    requestLine = requestLine.substr(versionEnd+2);
+    std::string version = requestLine.substr(0, versionEnd);
+    requestLine = requestLine.substr(versionEnd + 2);
     return version;
 }
 
 std::string HTTPParser::extractHeader(std::string &request) {
     size_t headerEnd = request.find("\r\n");
     std::string header = request.substr(0, headerEnd);
-    request = request.substr(headerEnd+2);
+    request = request.substr(headerEnd + 2);
     return header;
 }
 
 std::pair<std::string, std::string> HTTPParser::parseHeader(std::string &header) {
-    std::pair<std::string,std::string> currentHeader;
+    std::pair<std::string, std::string> currentHeader;
 
     size_t headerNameEnd = header.find(':');
-    std::string headerName = header.substr(0,headerNameEnd);
-    header = header.substr(headerNameEnd+2);
+    std::string headerName = header.substr(0, headerNameEnd);
+    header = header.substr(headerNameEnd + 2);
 
     currentHeader.first = headerName;
     currentHeader.second = header;
@@ -106,6 +110,6 @@ std::pair<std::string, std::string> HTTPParser::parseHeader(std::string &header)
 }
 
 void HTTPParser::printHeaders(std::unordered_map<std::string, std::string> headers) {
-    for (const auto &header : headers)
+    for (const auto &header: headers)
         std::cout << header.first << " : " << header.second << '\n';
 }

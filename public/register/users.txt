@@ -1,3 +1,2 @@
-==========================================
-Name: Aya
-Email: xcppl06@gmail.com
+name=Xavier Lermusieaux
+email=xavier.lermusieaux@gmail.com

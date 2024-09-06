@@ -62,7 +62,7 @@ http-server/
 
 
 - Handle multiple connections using threads (connection.cpp)
-- Make the parsing of POST request body more reusable and efficient (util.cpp)
+- ~~Make the parsing of POST request body more reusable (util.cpp)~~
 - Handle response Content-Type header more efficiently (httpHandler.cpp)
 - Handle bigger or incomplete requests (httpParser.cpp)
 - Handle chunked Transfer-Encoding (httpParser.cpp)

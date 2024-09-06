@@ -53,6 +53,6 @@ HTTPRequest::ParseState HTTPRequest::getState() {
     return this->state;
 }
 
-void HTTPRequest::setState(ParseState currentState) {
+void HTTPRequest::setState(const ParseState currentState) {
     this->state = currentState;
 }

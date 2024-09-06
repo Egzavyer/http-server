@@ -7,20 +7,27 @@
 class Connection {
 public:
     Connection();
+
     bool setupConnection();
-    const SOCKET* getClientSocket() const;
+
+    const SOCKET *getClientSocket() const;
+
     char address[256]{};
 
 private:
     struct addrinfo *result, *ptr, hints{};
     static int iResult;
-    SOCKET ListenSocket,ClientSocket;
+    SOCKET ListenSocket, ClientSocket;
     static ULONG addressSize;
 
     static bool initialiseWinsock();
+
     bool createSocket();
+
     bool bindSocket();
+
     bool listenOnSocket() const;
+
     bool acceptConnection();
 };
 
