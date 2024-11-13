@@ -9,17 +9,20 @@ Server::Server(Networking &netInterface, ConnectionHandler &connHandler) : n(net
 void Server::runServer() {
     try {
         while (true) {
-            unsigned long long client = n.acceptConnection();
+            //unsigned long long client = n.acceptConnection();
             connections.emplace_back(&ConnectionHandler::handleConnection, std::ref(this->h), std::ref(this->n),
-                                     client);
+                                     n.acceptConnection());
 
             for (auto &t: connections) {
+                //TODO: find way to remove the thread from the vector after it gets joined
                 if (t.joinable()) {
-                    connections.erase(connections.begin());
+                    //connections.erase(connections.begin());
+                    std::cout << "Joined thread: " << t.get_id() << "\n";
                     t.join();
                 }
             }
         }
+        n.shutdownSocket(n.getSock());
     } catch (std::exception &e) {
         throw e;
     }

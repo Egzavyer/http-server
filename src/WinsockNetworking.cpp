@@ -87,8 +87,54 @@ unsigned long long WinsockNetworking::acceptConnection() {
     return client;
 }
 
+void WinsockNetworking::receiveData(unsigned long long &client) {
+    char recvbuf[512];
+    int iResult;
+    int recvbuflen = 512;
+
+    //TODO: currently receives until peer shuts down connection, maybe try find other way
+    do {
+        if ((iResult = recv(client, recvbuf, recvbuflen, 0)) > 0) {
+            std::cout << "Bytes received: " << iResult << std::endl;
+            std::cout << recvbuf << std::endl;
+            //do stuff with the received data, probably pass it to connection handler
+        } else if (iResult == 0) {
+            std::cout << "Connection closing...\n";
+        } else {
+            closesocket(client);
+            WSACleanup();
+            throw std::runtime_error("recv failed: " + std::to_string(WSAGetLastError()));
+        }
+    } while (iResult > 0);
+}
+
+int WinsockNetworking::sendData(unsigned long long &client, char *sendbuf, int &totalBytes) {
+    int iSendResult;
+    //TODO: send in chunks
+    if ((iSendResult = send(client, sendbuf, strlen(sendbuf), 0)) == SOCKET_ERROR) {
+        closesocket(client);
+        WSACleanup();
+        throw std::runtime_error("send failed: " + std::to_string(WSAGetLastError()));
+    }
+    std::cout << "Bytes sent: " << iSendResult << std::endl;
+    return iSendResult;
+}
+
+void WinsockNetworking::shutdownSocket(const unsigned long long &client) {
+    int iResult;
+    if ((iResult = shutdown(client, SD_SEND)) == SOCKET_ERROR) {
+        closesocket(client);
+        WSACleanup();
+        throw std::runtime_error("shutdown failed: " + std::to_string(WSAGetLastError()));
+    }
+
+    closesocket(client);
+    WSACleanup();
+}
+
 unsigned long long WinsockNetworking::getSock() {
     return sock;
 }
+
 
 #endif //_WIN32

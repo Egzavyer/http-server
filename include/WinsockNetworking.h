@@ -23,6 +23,12 @@ public:
 
     unsigned long long acceptConnection() override;
 
+    void receiveData(unsigned long long &client) override;
+
+    int sendData(unsigned long long &client, char *sendbuf, int &totalBytes) override;
+
+    void shutdownSocket(const unsigned long long &client) override;
+
     unsigned long long getSock() override;
 
 private:
