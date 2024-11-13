@@ -1,2 +1,0 @@
-name=Xavier Lermusieaux
-email=xavier.lermusieaux@gmail.com

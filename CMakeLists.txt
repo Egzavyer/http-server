@@ -1,27 +1,9 @@
-cmake_minimum_required(VERSION 3.28)
-project(http_server)
+cmake_minimum_required(VERSION 3.10)
+project(HTTPServer)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(ServerExecutable
-        server/server.cpp
-        server/connection.cpp
-        server/httpRequest.cpp
-        server/httpRequest.h
-        server/httpParser.cpp
-        server/httpParser.h
-        server/httpHandler.cpp
-        server/httpHandler.h
-        server/httpResponse.cpp
-        server/httpResponse.h
-        common/util.cpp
-        common/util.h
-)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
-add_executable(ClientExecutable
-        client/client.cpp
-)
-
-target_link_libraries(ServerExecutable PRIVATE ws2_32)
-
-target_link_libraries(ClientExecutable PRIVATE ws2_32)
+add_subdirectory(src)
